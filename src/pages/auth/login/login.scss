@@ -1,0 +1,49 @@
+page-login {
+  .auth-providers {
+    margin-top: 1em;
+    button {
+      &.facebook {
+        background-color: color($colors, facebook);
+      }
+      &.google {
+        background-color: color($colors, google);
+      }
+      ion-icon {
+        font-size: 1.5em;
+      }
+    }
+  }
+  .or {
+    height: 3em;
+    line-height: 3em;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    color: color($colors, dark);
+    span {
+      display: inline-block;
+      position: relative;
+      &:before, &:after {
+        content: "";
+        position: absolute;
+        height: 1.5em;
+        border-bottom: 2px solid color($colors, dark);
+        top: 0;
+        width: 100px;
+      }
+      &:before {
+        right: 100%;
+        margin-right: 15px;
+      }
+      &:after {
+        left: 100%;
+        margin-left: 15px;
+      }
+    }
+  }
+  ion-item.ng-invalid {
+      ion-label {
+        color: red;
+      }
+    }
+}

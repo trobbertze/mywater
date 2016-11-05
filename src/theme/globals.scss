@@ -1,0 +1,10 @@
+.error-box {
+  background-color: color($colors, danger);
+  color: color($colors, white);
+  display: inline-block;
+  padding: 2px 4px 2px 4px;
+  margin: 2px;
+  float: right;
+  font-size: 0.9em;
+  border-radius: 2px;
+}

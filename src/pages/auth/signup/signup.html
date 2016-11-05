@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Create Account
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div class="auth-providers" padding>
+    <button ion-button block class="facebook" (click)="signUpFacebook()">
+      <ion-icon name="logo-facebook" padding></ion-icon>
+       Continue with Facebook
+    </button>
+    <!--
+    TODO: Cannot sign in with Google
+    <button ion-button full class="google" (click)="signUpGoogle()">
+      <ion-icon name="logo-google" padding></ion-icon>
+      Google
+    </button> -->
+  </div>
+  <div class="or">
+    <span>OR</span>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="signUp(form.value, form.valid)">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.email.errors && (submitted || this.form.controls.email.touched) && form.controls.email.errors.required" class="error-box">
+        * Email is required
+      </div>
+      <div *ngIf="form.controls.email.errors && (submitted || this.form.controls.email.touched) && form.controls.email.errors.invalidEmailAddress" class="error-box">
+        * Invalid email address
+      </div>
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" formControlName="password" (change)="onPasswordChange()"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.password.errors && (submitted || this.form.controls.password.touched) && form.controls.password.errors.required" class="error-box">
+        * Password is required
+      </div>
+      <div *ngIf="form.controls.password.errors && (submitted || this.form.controls.password.touched) && form.controls.password.errors.minlength" class="error-box">
+        * Password should be at least 5 characters
+      </div>
+      <ion-item>
+        <ion-label floating>Confirm password</ion-label>
+        <ion-input type="password" formControlName="confirmPassword"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.confirmPassword.errors && (submitted || this.form.controls.confirmPassword.touched) && form.controls.confirmPassword.errors.dontMatch" class="error-box">
+        * Passwords don't match
+      </div>
+    </ion-list>
+    <div padding>
+      <button ion-button large block color="primary" type="submit">Create account</button>
+    </div>
+  </form>
+</ion-content>

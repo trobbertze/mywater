@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Sign in
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div class="auth-providers" padding>
+    <button ion-button block class="facebook" (click)="loginFacebook()">
+      <ion-icon name="logo-facebook" padding></ion-icon>
+      Continue with Facebook
+    </button>
+    <!--
+    TOD: Cannot sign in with Google
+    <button ion-button full class="google">
+      <ion-icon name="logo-google" padding></ion-icon>
+      Google
+    </button> -->
+  </div>
+  <div class="or">
+    <span>OR</span>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="login(form.value, form.valid)">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="text" formControlName="email"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.email.errors && (submitted || form.controls.email.touched) && form.controls.email.errors.required" class="error-box">
+        * Email is required
+      </div>
+      <div *ngIf="form.controls.email.errors && (submitted || form.controls.email.touched) && form.controls.email.errors.invalidEmailAddress" class="error-box">
+        * Invalid email address
+      </div>
+      <ion-item>
+        <ion-label floating>Password</ion-label>
+        <ion-input type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.password.errors && (submitted || form.controls.password.touched) && form.controls.password.errors.required" class="error-box">
+        * Password is required
+      </div>
+      <div *ngIf="form.controls.password.errors && (submitted || form.controls.password.touched) && form.controls.password.errors.minlength" class="error-box">
+        * Password should be at least 5 characters
+      </div>
+    </ion-list>
+    <div padding>
+      <button ion-button large block outline type="submit">Sign in</button>
+    </div>
+  </form>
+  <button ion-button color="dark" clear large block (click)="gotoResetPassword()">Forgot password</button>
+</ion-content>

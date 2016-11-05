@@ -1,0 +1,23 @@
+page-landing {
+  img {
+    padding-top: 4em;
+    display: block;
+    margin: auto;
+  }
+  h1 {
+    display: flex;
+    justify-content: center;
+    font-size: 3em;
+    margin-bottom: 1em;
+  }
+  .signin {
+    text-align: center;
+    font-size: 1.5em;
+  }
+  .bottom-section {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin-bottom: 4em;
+  }
+}
