@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, LoadingController  } from 'ionic-angular';
+import { NavController, AlertController, LoadingController } from 'ionic-angular';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
 import { Facebook } from 'ionic-native';
@@ -17,8 +17,6 @@ declare let firebase: any;
 export class LoginPage {
   public form : any
   submitted: boolean = false
-  email: any
-  password: any
   constructor(
     public nav: NavController,
     public alertCtrl: AlertController,

@@ -1,3 +1,13 @@
 page-readings {
-
+  .reading-entry {
+    display: flex;
+    .reading-date {
+      flex: 1;
+    }
+    .reading-value {
+      flex: 1;
+      text-align: right;
+      font-weight: bold;
+    }
+  }
 }

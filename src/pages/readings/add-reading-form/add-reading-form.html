@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons>
+      <button ion-button (click)="dismiss()">
+        Cancel
+      </button>
+    </ion-buttons>
+    <ion-title>Meter Reading</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="form" (ngSubmit)="saveReading(form.value, form.valid)">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Reading</ion-label>
+        <ion-input type="text" formControlName="reading"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.reading.errors && (submitted || form.controls.reading.touched) && form.controls.reading.errors.required" class="error-box">
+        * Reading is required
+      </div>
+    </ion-list>
+    <div padding>
+      <button ion-button large block outline type="submit">Submit</button>
+    </div>
+  </form>
+</ion-content>

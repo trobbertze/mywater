@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireModule } from 'angularfire2';
+import {MomentModule} from 'angular2-moment';
 
 import { ValidationService } from '../providers/validation.service';
 
@@ -11,6 +12,7 @@ import { LoginPage } from '../pages/auth/login/login';
 import { SignUpPage } from '../pages/auth/signup/signup';
 import { ResetPasswordPage } from '../pages/auth/resetPassword/resetPassword';
 import { ReadingsPage } from '../pages/readings/readings';
+import { AddReadingForm } from '../pages/readings/add-reading-form/add-reading-form';
 import { InvoicesPage } from '../pages/invoices/invoices';
 import { StatsPage } from '../pages/stats/stats';
 import { SettingsPage } from '../pages/settings/settings';
@@ -32,6 +34,7 @@ export const firebaseConfig = {
     SignUpPage,
     ResetPasswordPage,
     ReadingsPage,
+    AddReadingForm,
     InvoicesPage,
     StatsPage,
     SettingsPage,
@@ -40,7 +43,8 @@ export const firebaseConfig = {
   imports: [
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MomentModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -50,6 +54,7 @@ export const firebaseConfig = {
     SignUpPage,
     ResetPasswordPage,
     ReadingsPage,
+    AddReadingForm,
     InvoicesPage,
     StatsPage,
     SettingsPage,
