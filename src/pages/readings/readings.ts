@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
-import {AngularFire, FirebaseListObservable} from 'angularfire2';
+import {AngularFire, FirebaseListObservable } from 'angularfire2';
 
 import { AddReadingForm } from './add-reading-form/add-reading-form'
 
@@ -27,7 +27,12 @@ export class ReadingsPage {
           content: 'Fetching meter readings...'
         });
         loader.present()
-        this.readings = this.af.database.list('/readings/' + this.auth.uid)
+        this.readings = this.af.database.list('/readings/' + this.auth.uid, {
+          query: {
+            orderByChild: 'timestamp'
+          }
+        })
+
         this.readings.subscribe(
           (success) => loader.dismiss(),
           (err) => console.log(err)

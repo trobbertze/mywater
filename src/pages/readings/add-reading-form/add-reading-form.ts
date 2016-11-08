@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 import { NavController, ViewController,
-  AlertController, LoadingController, NavParams  } from 'ionic-angular';
-import { FormBuilder, Validators } from '@angular/forms';
-import { AngularFire } from 'angularfire2';
+  AlertController, LoadingController, NavParams  } from 'ionic-angular'
+import { FormBuilder, Validators } from '@angular/forms'
+import { AngularFire } from 'angularfire2'
 
-declare let firebase: any;
+declare let firebase: any
+declare let moment: any
 
 @Component({
   selector: 'page-add-reading-form',
@@ -26,11 +27,15 @@ export class AddReadingForm {
     params: NavParams
   ) {
     this.form = this._fb.group({
-      reading: ['', [<any>Validators.required]]
+      reading: ['', [<any>Validators.required]],
+      timestamp: ['']
     })
     this.editReading = params.get('reading')
     if (this.editReading) {
       this.form.controls['reading'].setValue(this.editReading.value)
+      this.form.controls['timestamp'].setValue(moment(this.editReading.timestamp).format('YYYY-MM-DDTHH:mmZ'))
+    } else {
+      this.form.controls['timestamp'].setValue(moment(firebase.database.ServerValue.TIMESTAMP).format('YYYY-MM-DDTHH:mmZ'))
     }
   }
   ionViewWillEnter () {
@@ -51,12 +56,12 @@ export class AddReadingForm {
       if (this.editReading) {
         promise = readings.update(this.editReading.$key, {
           value: this.form.controls['reading'].value,
-          timestamp: this.editReading.timestamp
+          timestamp: moment(this.form.controls['timestamp'].value, 'YYYY-MM-DDTHH:mmZ').valueOf(),
         })
       } else {
         promise = readings.push({
           value: this.form.controls['reading'].value,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
+          timestamp: moment(this.form.controls['timestamp'].value, 'YYYY-MM-DDTHH:mmZ').valueOf(),
         })
       }
       promise

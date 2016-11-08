@@ -20,6 +20,10 @@
       <div *ngIf="form.controls.reading.errors && (submitted || form.controls.reading.touched) && form.controls.reading.errors.required" class="error-box">
         * Reading is required
       </div>
+      <ion-item>
+        <ion-label floating>Date/Time</ion-label>
+        <ion-datetime displayFormat="DDDD DD MMM, h:mm A" pickerFormat="DD MMM YYYY h:mm A" formControlName="timestamp"></ion-datetime>
+      </ion-item>
     </ion-list>
     <div padding>
       <button ion-button large block outline type="submit">Submit</button>

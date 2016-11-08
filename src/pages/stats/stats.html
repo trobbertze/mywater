@@ -5,6 +5,19 @@
 </ion-header>
 
 <ion-content padding>
+  <div padding>
+    <ion-segment [(ngModel)]="segment">
+      <ion-segment-button value="thisMonth" (ionSelect)="selectedThisMonth()">
+        This month
+      </ion-segment-button>
+      <ion-segment-button value="lastMonth" (ionSelect)="selectedLastMonth()">
+        Last month
+      </ion-segment-button>
+      <ion-segment-button value="allTime" (ionSelect)="selectedAllTime()">
+        All time
+      </ion-segment-button>
+    </ion-segment>
+  </div>
   <canvas baseChart width="400" height="400"
                [datasets]="lineChartData"
                [options]="lineChartOptions"

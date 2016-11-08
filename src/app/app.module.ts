@@ -6,6 +6,8 @@ import { MomentModule } from 'angular2-moment';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import { ValidationService } from '../providers/validation.service';
+import { SortByDatePipe }  from '../pipes/sortByDate.pipe'
+import { MomentCalendarPipe }  from '../pipes/momentCalendar.pipe'
 
 import { MyApp } from './app.component';
 import { LandingPage } from '../pages/auth/landing/landing';
@@ -39,7 +41,9 @@ export const firebaseConfig = {
     InvoicesPage,
     StatsPage,
     SettingsPage,
-    TabsPage
+    TabsPage,
+    SortByDatePipe,
+    MomentCalendarPipe
   ],
   imports: [
     IonicModule.forRoot(MyApp),
