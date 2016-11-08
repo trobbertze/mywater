@@ -14,7 +14,7 @@
   <form [formGroup]="form" (ngSubmit)="saveReading(form.value, form.valid)">
     <ion-list>
       <ion-item>
-        <ion-label floating>Reading</ion-label>
+        <ion-label floating>Reading (in kl)</ion-label>
         <ion-input type="text" formControlName="reading"></ion-input>
       </ion-item>
       <div *ngIf="form.controls.reading.errors && (submitted || form.controls.reading.touched) && form.controls.reading.errors.required" class="error-box">

@@ -5,5 +5,12 @@
 </ion-header>
 
 <ion-content padding>
-
+  <canvas baseChart width="400" height="400"
+               [datasets]="lineChartData"
+               [options]="lineChartOptions"
+               [colors]="lineChartColors"
+               [legend]="lineChartLegend"
+               [chartType]="lineChartType"
+               (chartHover)="chartHovered($event)"
+               (chartClick)="chartClicked($event)"></canvas>
 </ion-content>

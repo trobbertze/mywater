@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularFireModule } from 'angularfire2';
-import {MomentModule} from 'angular2-moment';
+import { MomentModule } from 'angular2-moment';
+import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import { ValidationService } from '../providers/validation.service';
 
@@ -44,7 +45,8 @@ export const firebaseConfig = {
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
     ReactiveFormsModule,
-    MomentModule
+    MomentModule,
+    ChartsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
