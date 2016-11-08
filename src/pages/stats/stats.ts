@@ -2,6 +2,8 @@ import { Component } from '@angular/core'
 import { AngularFire, FirebaseListObservable } from 'angularfire2'
 import { NavController, AlertController, LoadingController } from 'ionic-angular'
 
+declare let moment: any
+
 @Component({
   selector: 'page-stats',
   templateUrl: 'stats.html'
@@ -10,17 +12,17 @@ export class StatsPage {
   readings: FirebaseListObservable<any>
   auth: any
   authSubscription: any
-  segment: any
+  filter: any
   constructor(public navCtrl: NavController,
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
     private af: AngularFire) {
-      this.segment = 'thisMonth'
+      this.filter = 'thisMonth'
   }
   ionViewWillEnter () {
     this.authSubscription = this.af.auth.subscribe(auth => {
       this.auth = auth
-      if (this.auth) {
+      if (this.auth && !this.readings) {
         let loader = this.loadingCtrl.create({
           content: 'Fetching meter readings...'
         });
@@ -33,21 +35,7 @@ export class StatsPage {
         this.readings.subscribe(
           (readings) => {
             loader.dismiss()
-            let data:Array<any> = new Array()
-            readings.forEach((reading) => {
-              data.push({
-                x: reading.timestamp,
-                y: reading.value
-              })
-            })
-            data.sort((a, b) => a - b )
-            let _lineChartData:Array<any> = new Array(1);
-            _lineChartData[0] = {
-              data: data,
-              label: 'Readings'
-            }
-            this.lineChartData = _lineChartData;
-            // this.lineChartLabels = labels
+            this.applyFilter(readings, this.filter)
           },
           (err) => console.log(err)
         )
@@ -83,13 +71,39 @@ export class StatsPage {
   ];
   public lineChartLegend:boolean = false;
   public lineChartType:string = 'line';
+  applyFilter (readings, filter) {
+    let data:Array<any> = new Array()
+    readings.forEach((reading) => {
+      let item = {
+        x: reading.timestamp,
+        y: reading.value
+      }
+      if (filter === 'thisMonth' && (moment(reading.timestamp).month() === moment().month())) {
+        data.push(item)
+      }
+      else if (filter === 'lastMonth' && (moment(reading.timestamp).month() === (moment().month() - 1))) {
+        data.push(item)
+      }
+      else if (filter === 'allTime') {
+        data.push(item)
+      }
+
+    })
+    data.sort((a, b) => a - b )
+    let _lineChartData:Array<any> = new Array(1);
+    _lineChartData[0] = {
+      data: data,
+      label: 'Readings'
+    }
+    this.lineChartData = _lineChartData;
+  }
   selectedThisMonth () {
-    console.log('this')
+    this.readings.forEach((readings) => this.applyFilter(readings, 'thisMonth'))
   }
   selectedLastMonth () {
-    console.log('last')
+    this.readings.forEach((readings) => this.applyFilter(readings, 'lastMonth'))
   }
   selectedAllTime () {
-    console.log('alltime')
+    this.readings.forEach((readings) => this.applyFilter(readings, 'allTime'))
   }
 }
