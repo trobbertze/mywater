@@ -4,12 +4,7 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-card *ngIf="filter != 'allTime'">
-    <ion-card-content>
-      {{ restrictionNotice }}
-    </ion-card-content>
-  </ion-card>
+<ion-content>
   <div padding>
     <ion-segment [(ngModel)]="filter">
       <ion-segment-button value="thisMonth" (ionSelect)="selectedThisMonth()">
@@ -23,12 +18,28 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  <canvas baseChart width="400" height="400"
-               [datasets]="lineChartData"
-               [options]="lineChartOptions"
-               [colors]="lineChartColors"
-               [legend]="lineChartLegend"
-               [chartType]="lineChartType"
-               (chartHover)="chartHovered($event)"
-               (chartClick)="chartClicked($event)"></canvas>
+  <ion-card *ngIf="filter != 'allTime'">
+    <ion-card-content>
+      {{ restrictionNotice }}
+    </ion-card-content>
+  </ion-card>
+  <ion-card>
+    <ion-card-content>
+      <canvas baseChart width="400" height="400"
+                   [datasets]="lineChartData"
+                   [options]="lineChartOptions"
+                   [colors]="lineChartColors"
+                   [legend]="lineChartLegend"
+                   [chartType]="lineChartType"
+                   (chartHover)="chartHovered($event)"
+                   (chartClick)="chartClicked($event)"></canvas>
+    </ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="filter != 'allTime'">
+    <ion-card-content>
+      <ul>
+        <li *ngFor="let costEntry of costEntries">{{ costEntry }} </li>
+      </ul>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
