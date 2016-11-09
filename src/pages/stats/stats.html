@@ -5,6 +5,11 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-card *ngIf="filter != 'allTime'">
+    <ion-card-content>
+      {{ restrictionNotice }}
+    </ion-card-content>
+  </ion-card>
   <div padding>
     <ion-segment [(ngModel)]="filter">
       <ion-segment-button value="thisMonth" (ionSelect)="selectedThisMonth()">

@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
 import { IonicApp, IonicModule } from 'ionic-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpModule }    from '@angular/http';
 import { AngularFireModule } from 'angularfire2';
 import { MomentModule } from 'angular2-moment';
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 import { ValidationService } from '../providers/validation.service';
+import { RestrictionLevelsService } from '../providers/restrictionLevel.service';
+
 import { SortByDatePipe }  from '../pipes/sortByDate.pipe'
 import { MomentCalendarPipe }  from '../pipes/momentCalendar.pipe'
 
@@ -46,6 +49,7 @@ export const firebaseConfig = {
     MomentCalendarPipe
   ],
   imports: [
+    HttpModule,
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
     ReactiveFormsModule,
@@ -67,7 +71,8 @@ export const firebaseConfig = {
     TabsPage
   ],
   providers: [
-    ValidationService
+    ValidationService,
+    RestrictionLevelsService
   ]
 })
 export class AppModule {}
