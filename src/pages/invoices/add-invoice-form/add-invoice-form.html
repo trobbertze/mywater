@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons>
+      <button ion-button (click)="dismiss()">
+        Cancel
+      </button>
+    </ion-buttons>
+    <ion-title>Invoice</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="form" (ngSubmit)="saveInvoice(form.value, form.valid)">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>New reading (in kl)</ion-label>
+        <ion-input type="text" formControlName="newReading"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.newReading.errors && (submitted || form.controls.newReading.touched) && form.controls.newReading.errors.required" class="error-box">
+        * New reading is required
+      </div>
+      <ion-item>
+        <ion-label floating>Previous reading (in kl)</ion-label>
+        <ion-input type="text" formControlName="previousReading"></ion-input>
+      </ion-item>
+      <div *ngIf="form.controls.previousReading.errors && (submitted || form.controls.previousReading.touched) && form.controls.previousReading.errors.required" class="error-box">
+        * New reading is required
+      </div>
+      <ion-item>
+        <ion-label floating>Period start date</ion-label>
+        <ion-datetime displayFormat="DDDD DD MMM" pickerFormat="DD MMM YYYY" formControlName="periodStartDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Period end date</ion-label>
+        <ion-datetime displayFormat="DDDD DD MMM" pickerFormat="DD MMM YYYY" formControlName="periodEndDate"></ion-datetime>
+      </ion-item>
+    </ion-list>
+    <div padding>
+      <button ion-button large block outline type="submit">Submit</button>
+    </div>
+  </form>
+</ion-content>

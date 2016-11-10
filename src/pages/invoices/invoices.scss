@@ -1,3 +1,13 @@
 page-invoices {
-
+  .invoice-entry {
+    display: flex;
+    .invoice-date {
+      flex: 1;
+    }
+    .invoice-value {
+      flex: 1;
+      text-align: right;
+      font-weight: bold;
+    }
+  }
 }

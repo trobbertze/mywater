@@ -91,10 +91,12 @@ export class RestrictionLevelsService {
   }
   getBeginningOfMonthReading (forMonth, data) {
     let monthStartEndDates = this.getMonthStartEnd(forMonth)
+    data = data.sort((a, b) => a.timestamp - b.timestamp )
     return this.evaluateLinear(monthStartEndDates.start, data)
   }
   getEndOfMonthReading (forMonth, data) {
     let monthStartEndDates = this.getMonthStartEnd(forMonth)
+    data = data.sort((a, b) => a.timestamp - b.timestamp )
     return this.evaluateLinear(monthStartEndDates.end, data)
   }
   getReadingsForMonth (forMonth, data) {

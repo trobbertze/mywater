@@ -20,6 +20,7 @@ import { ResetPasswordPage } from '../pages/auth/resetPassword/resetPassword';
 import { ReadingsPage } from '../pages/readings/readings';
 import { AddReadingForm } from '../pages/readings/add-reading-form/add-reading-form';
 import { InvoicesPage } from '../pages/invoices/invoices';
+import { AddInvoiceForm } from '../pages/invoices/add-invoice-form/add-invoice-form';
 import { StatsPage } from '../pages/stats/stats';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -42,6 +43,7 @@ export const firebaseConfig = {
     ReadingsPage,
     AddReadingForm,
     InvoicesPage,
+    AddInvoiceForm,
     StatsPage,
     SettingsPage,
     TabsPage,
@@ -66,6 +68,7 @@ export const firebaseConfig = {
     ReadingsPage,
     AddReadingForm,
     InvoicesPage,
+    AddInvoiceForm,
     StatsPage,
     SettingsPage,
     TabsPage

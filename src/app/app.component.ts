@@ -13,7 +13,6 @@ import { LandingPage } from '../pages/auth/landing/landing'
 })
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
-  rootPage = TabsPage;
 
   constructor(platform: Platform, private af: AngularFire) {
       platform.ready().then(() => {

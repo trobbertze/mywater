@@ -4,6 +4,7 @@ import { NavController, AlertController, LoadingController } from 'ionic-angular
 
 import { RestrictionLevelsService } from '../../providers/restrictionLevel.service';
 
+declare let firebase: any
 declare let moment: any
 
 @Component({
@@ -11,7 +12,8 @@ declare let moment: any
   templateUrl: 'stats.html'
 })
 export class StatsPage {
-  readings: FirebaseListObservable<any>
+  readings: any
+  invoices: any
   auth: any
   authSubscription: any
   filter: any
@@ -37,21 +39,50 @@ export class StatsPage {
           content: 'Fetching meter readings...'
         });
         loader.present()
-        this.readings = this.af.database.list('/readings/' + this.auth.uid, {
-          query: {
-            orderByChild: 'timestamp'
-          }
-        })
-        this.readings.subscribe(
-          (readings) => {
-            this.readingsList = readings
+
+        if (!this.readings) {
+          this.readings = firebase.database().ref('/readings/' + this.auth.uid)
+          this.readings.on('value', (readings) => {
             loader.dismiss()
-            this.applyFilter(this.filter)
-          },
-          (err) => console.log(err)
-        )
+            this.updateReadings(readings.val())
+          });
+        }
+        if (!this.invoices) {
+          this.invoices = firebase.database().ref('/invoices/' + this.auth.uid)
+          this.invoices.on('value', (invoices) => {
+            loader.dismiss()
+            this.updateInvoices(invoices.val())
+          });
+        }
       }
     })
+  }
+  updateInvoices (invoices) {
+    this.readingsList = this.readingsList.filter((o) => o.isReading)
+    for(let key in invoices) {
+      this.readingsList.push({
+        timestamp: invoices[key].periodEndDate,
+        value: invoices[key].newReading,
+        isReading: false
+      })
+      this.readingsList.push({
+        timestamp: invoices[key].periodStartDate,
+        value: invoices[key].previousReading,
+        isReading: false
+      })
+    }
+    this.applyFilter(this.filter)
+  }
+  updateReadings (readings) {
+    this.readingsList = this.readingsList.filter((o) => !o.isReading)
+    for(let key in readings) {
+      this.readingsList.push({
+        timestamp: readings[key].timestamp,
+        value: readings[key].value,
+        isReading: true
+      })
+    }
+    this.applyFilter(this.filter)
   }
   ionViewDidLeave () {
     this.authSubscription.unsubscribe()
