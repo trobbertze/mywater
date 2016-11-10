@@ -20,12 +20,18 @@
       <div *ngIf="form.controls.newReading.errors && (submitted || form.controls.newReading.touched) && form.controls.newReading.errors.required" class="error-box">
         * New reading is required
       </div>
+      <div *ngIf="form.controls.previousReading.errors && (submitted || form.controls.previousReading.touched) && form.controls.previousReading.errors.pattern" class="error-box">
+        * New reading must be a number
+      </div>
       <ion-item>
         <ion-label floating>Previous reading (in kl)</ion-label>
         <ion-input type="text" formControlName="previousReading"></ion-input>
       </ion-item>
       <div *ngIf="form.controls.previousReading.errors && (submitted || form.controls.previousReading.touched) && form.controls.previousReading.errors.required" class="error-box">
-        * New reading is required
+        * Previous reading is required
+      </div>
+      <div *ngIf="form.controls.previousReading.errors && (submitted || form.controls.previousReading.touched) && form.controls.previousReading.errors.pattern" class="error-box">
+        * Previous reading must be a number
       </div>
       <ion-item>
         <ion-label floating>Period start date</ion-label>

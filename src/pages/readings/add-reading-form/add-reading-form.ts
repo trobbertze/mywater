@@ -30,7 +30,7 @@ export class AddReadingForm {
     params: NavParams
   ) {
     this.form = this._fb.group({
-      reading: ['', [<any>Validators.required]],
+      reading: ['', [<any>Validators.required, <any>Validators.pattern('^(0|[1-9][0-9]*)$')]],
       timestamp: ['']
     })
     this.editReading = params.get('reading')

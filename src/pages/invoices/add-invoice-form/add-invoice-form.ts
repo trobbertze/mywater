@@ -30,8 +30,8 @@ export class AddInvoiceForm {
     params: NavParams
   ) {
     this.form = this._fb.group({
-      newReading: ['', [<any>Validators.required]],
-      previousReading: ['', [<any>Validators.required]],
+      newReading: ['', [<any>Validators.required, <any>Validators.pattern('^(0|[1-9][0-9]*)$')]],
+      previousReading: ['', [<any>Validators.required, <any>Validators.pattern('^(0|[1-9][0-9]*)$')]],
       periodStartDate: [''],
       periodEndDate: ['']
     })
