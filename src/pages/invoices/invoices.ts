@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { NavController, ModalController, AlertController, LoadingController } from 'ionic-angular';
 import {AngularFire, FirebaseListObservable } from 'angularfire2';
 
@@ -12,12 +12,15 @@ export class InvoicesPage {
   invoices: FirebaseListObservable<any>
   auth: any
   authSubscription: any
+  showEmpty: boolean
+  invoicesCounter: any
   constructor(public navCtrl: NavController,
     public modalCtrl: ModalController,
     public loadingCtrl: LoadingController,
     public alertCtrl: AlertController,
-    private af: AngularFire) {
-
+    private af: AngularFire,
+    private ngZone: NgZone) {
+      this.showEmpty = false
   }
   ionViewWillEnter () {
     this.authSubscription = this.af.auth.subscribe(auth => {
@@ -34,7 +37,19 @@ export class InvoicesPage {
         })
 
         this.invoices.subscribe(
-          (invoices) => loader.dismiss(),
+          (invoices) => {
+            this.invoicesCounter = invoices.length
+            setTimeout(() => {
+              this.ngZone.run(() => {
+                loader.dismiss()
+                if (this.invoicesCounter === 0) {
+                  this.showEmpty = true
+                } else {
+                  this.showEmpty = false
+                }
+              })
+            }, 100)
+          },
           (err) => console.log(err)
         )
       }

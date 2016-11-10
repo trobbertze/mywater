@@ -7,28 +7,44 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-fab right bottom>
-    <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
-  <ion-list>
-    <ion-item-sliding  *ngFor="let reading of (readings | async) | sortByDate">
-      <ion-item>
-        <div class="reading-entry">
-          <div class="reading-date">{{ reading.timestamp | momentCalendar }}</div>
-          <div class="reading-value">{{ reading.value | number : '1.3' }}</div>
-        </div>
-      </ion-item>
-      <ion-item-options side="right">
-        <button ion-button color="primary" (click)="editReading(reading)">
-          <ion-icon name="create"></ion-icon>
-          Edit
-        </button>
-        <button ion-button color="danger" (click)="deleteReading(reading)">
-          <ion-icon name="remove"></ion-icon>
-          Remove
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
+  <div *ngIf="showEmpty === false">
+    <ion-fab right bottom>
+      <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
+    <ion-list>
+      <ion-item-sliding  *ngFor="let reading of (readings | async) | sortByDate">
+        <ion-item>
+          <div class="reading-entry">
+            <div class="reading-date">{{ reading.timestamp | momentCalendar }}</div>
+            <div class="reading-value">{{ reading.value | number : '1.3' }}</div>
+          </div>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="primary" (click)="editReading(reading)">
+            <ion-icon name="create"></ion-icon>
+            Edit
+          </button>
+          <button ion-button color="danger" (click)="deleteReading(reading)">
+            <ion-icon name="remove"></ion-icon>
+            Remove
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  </div>
+  <div *ngIf="showEmpty === true">
+    <img src="assets/logo.png">
+    <h1>
+      my water
+    </h1>
+    <div class="content">
+      <div>You have not recorded any water meter readings yet.</div>
+    </div>
+    <div class="shortcuts">
+      <button ion-button icon-left outline (click)="showAddModal()">
+        <ion-icon name="speedometer"></ion-icon>
+        Record a reading
+      </button>
+    </div>
+  </div>
 </ion-content>

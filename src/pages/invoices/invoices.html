@@ -1,34 +1,50 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Meter Invoices
+      Invoices
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-fab right bottom>
-    <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
-  </ion-fab>
-  <ion-list>
-    <ion-item-sliding  *ngFor="let invoice of (invoices | async) | sortByDate">
-      <ion-item>
-        <div class="invoice-entry">
-          <div class="invoice-date">{{ invoice.periodEndDate | momentCalendar }}</div>
-          <div class="invoice-value">{{ invoice.newReading | number : '1.3' }}</div>
-        </div>
-      </ion-item>
-      <ion-item-options side="right">
-        <button ion-button color="primary" (click)="editInvoice(invoice)">
-          <ion-icon name="create"></ion-icon>
-          Edit
-        </button>
-        <button ion-button color="danger" (click)="deleteInvoice(invoice)">
-          <ion-icon name="remove"></ion-icon>
-          Remove
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
+  <div *ngIf="showEmpty === false">
+    <ion-fab right bottom>
+      <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
+    <ion-list>
+      <ion-item-sliding  *ngFor="let invoice of (invoices | async) | sortByDate">
+        <ion-item>
+          <div class="invoice-entry">
+            <div class="invoice-date">{{ invoice.periodEndDate | momentCalendar }}</div>
+            <div class="invoice-value">{{ invoice.newReading | number : '1.3' }}</div>
+          </div>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="primary" (click)="editInvoice(invoice)">
+            <ion-icon name="create"></ion-icon>
+            Edit
+          </button>
+          <button ion-button color="danger" (click)="deleteInvoice(invoice)">
+            <ion-icon name="remove"></ion-icon>
+            Remove
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  </div>
+  <div *ngIf="showEmpty === true">
+    <img src="assets/logo.png">
+    <h1>
+      my water
+    </h1>
+    <div class="content">
+      <div>You have not loaded any water invoices yet.</div>
+    </div>
+    <div class="shortcuts">
+      <button ion-button icon-left (click)="showAddModal()">
+        <ion-icon name="pricetags-outline"></ion-icon>
+        Load an invoice
+      </button>
+    </div>
+  </div>
 </ion-content>

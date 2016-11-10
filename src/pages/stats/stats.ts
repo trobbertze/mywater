@@ -1,8 +1,11 @@
 import { Component } from '@angular/core'
 import { AngularFire, FirebaseListObservable } from 'angularfire2'
-import { NavController, AlertController, LoadingController } from 'ionic-angular'
+import { NavController, AlertController, ModalController, LoadingController } from 'ionic-angular'
 
 import { RestrictionLevelsService } from '../../providers/restrictionLevel.service';
+
+import { AddInvoiceForm } from '../invoices/add-invoice-form/add-invoice-form'
+import { AddReadingForm } from '../readings/add-reading-form/add-reading-form'
 
 declare let firebase: any
 declare let moment: any
@@ -20,11 +23,17 @@ export class StatsPage {
   restrictionNotice: any
   readingsList: any
   costEntries: String[]
+  showEmptyMessage: boolean
+  emptyStatus: any
+  emptyMessage: String
   constructor(public navCtrl: NavController,
     public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController,
     public alertCtrl: AlertController,
     private af: AngularFire,
     private restrictions: RestrictionLevelsService) {
+      this.showEmptyMessage = false
+      this.emptyStatus = {}
       this.readingsList = []
       this.filter = 'thisMonth'
       this.restrictions.getBanner('thisMonth').then((banner) => {
@@ -36,7 +45,7 @@ export class StatsPage {
       this.auth = auth
       if (this.auth && !this.readings) {
         let loader = this.loadingCtrl.create({
-          content: 'Fetching meter readings...'
+          content: 'Fetching data...'
         });
         loader.present()
 
@@ -44,6 +53,7 @@ export class StatsPage {
           this.readings = firebase.database().ref('/readings/' + this.auth.uid)
           this.readings.on('value', (readings) => {
             loader.dismiss()
+            this.updateEmptyStatus('readings', readings.val())
             this.updateReadings(readings.val())
           });
         }
@@ -51,11 +61,44 @@ export class StatsPage {
           this.invoices = firebase.database().ref('/invoices/' + this.auth.uid)
           this.invoices.on('value', (invoices) => {
             loader.dismiss()
+            this.updateEmptyStatus('invoices', invoices.val())
             this.updateInvoices(invoices.val())
           });
         }
       }
     })
+  }
+  updateEmptyStatus (item, data) {
+    this.emptyStatus[item] = data === null ? false : true
+
+    if (!this.emptyStatus.invoices && !this.emptyStatus.readings) {
+      this.emptyMessage =
+        `
+        Lets get going by loading at least one water invoice and
+        recording at least one water meter reading.
+        `
+
+      this.showEmptyMessage = true
+    }
+    else if (!this.emptyStatus.invoices && this.emptyStatus.readings) {
+      this.emptyMessage =
+      `
+      You have recorded some water meter readings.  Please navigate to
+      the 'Invoices' section and load at least one invoice.
+      `
+      this.showEmptyMessage = true
+    }
+    else if (this.emptyStatus.invoices && !this.emptyStatus.readings) {
+      this.emptyMessage =
+      `
+      You have loaded some water invoices.  Please navigate to the
+      'Readings' section and record some water meter readings.
+      `
+      this.showEmptyMessage = true
+    }
+    else {
+      this.showEmptyMessage = false
+    }
   }
   updateInvoices (invoices) {
     this.readingsList = this.readingsList.filter((o) => o.isReading)
@@ -246,5 +289,13 @@ export class StatsPage {
   }
   selectedAllTime () {
     this.applyFilter('allTime')
+  }
+  loadInvoice () {
+    let addForm = this.modalCtrl.create(AddInvoiceForm);
+    addForm.present();
+  }
+  loadReading () {
+    let addForm = this.modalCtrl.create(AddReadingForm);
+    addForm.present();
   }
 }
