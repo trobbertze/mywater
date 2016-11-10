@@ -25,6 +25,9 @@ import { StatsPage } from '../pages/stats/stats';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
 
+import { InvoiceHelpPage } from '../pages/invoices/invoice-help/invoice-help'
+import { ReadingsHelpPage } from '../pages/readings/readings-help/readings-help'
+
 export const firebaseConfig = {
   apiKey: 'AIzaSyCxZ7rPWfb1q91SQuKpb39OiMyquqD9Uvc',
   authDomain: 'mywater-bc113.firebaseapp.com',
@@ -47,6 +50,8 @@ export const firebaseConfig = {
     StatsPage,
     SettingsPage,
     TabsPage,
+    InvoiceHelpPage,
+    ReadingsHelpPage,
     SortByDatePipe,
     MomentCalendarPipe
   ],
@@ -71,7 +76,9 @@ export const firebaseConfig = {
     AddInvoiceForm,
     StatsPage,
     SettingsPage,
-    TabsPage
+    TabsPage,
+    InvoiceHelpPage,
+    ReadingsHelpPage
   ],
   providers: [
     ValidationService,

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { AngularFire, FirebaseListObservable } from 'angularfire2'
+import { AngularFire } from 'angularfire2'
 import { NavController, AlertController, ModalController, LoadingController } from 'ionic-angular'
 
 import { RestrictionLevelsService } from '../../providers/restrictionLevel.service';

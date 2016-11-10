@@ -1,8 +1,10 @@
 import { Component } from '@angular/core'
-import { NavController, ViewController,
+import { NavController, ViewController, ModalController,
   AlertController, LoadingController, NavParams  } from 'ionic-angular'
 import { FormBuilder, Validators } from '@angular/forms'
 import { AngularFire } from 'angularfire2'
+
+import { InvoiceHelpPage } from '../invoice-help/invoice-help'
 
 declare let firebase: any
 declare let moment: any
@@ -22,6 +24,7 @@ export class AddInvoiceForm {
     public viewCtrl: ViewController,
     public alertCtrl: AlertController,
     public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController,
     private _fb: FormBuilder,
     private af: AngularFire,
     params: NavParams
@@ -93,6 +96,10 @@ export class AddInvoiceForm {
   }
   dismiss () {
     this.viewCtrl.dismiss()
+  }
+  showHelp () {
+    let addForm = this.modalCtrl.create(InvoiceHelpPage);
+    addForm.present();
   }
 
 }

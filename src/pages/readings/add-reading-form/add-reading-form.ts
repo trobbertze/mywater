@@ -1,8 +1,10 @@
 import { Component } from '@angular/core'
 import { NavController, ViewController,
-  AlertController, LoadingController, NavParams  } from 'ionic-angular'
+  AlertController, LoadingController, ModalController, NavParams  } from 'ionic-angular'
 import { FormBuilder, Validators } from '@angular/forms'
 import { AngularFire } from 'angularfire2'
+
+import { ReadingsHelpPage } from '../readings-help/readings-help'
 
 declare let firebase: any
 declare let moment: any
@@ -22,6 +24,7 @@ export class AddReadingForm {
     public viewCtrl: ViewController,
     public alertCtrl: AlertController,
     public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController,
     private _fb: FormBuilder,
     private af: AngularFire,
     params: NavParams
@@ -88,5 +91,8 @@ export class AddReadingForm {
   dismiss () {
     this.viewCtrl.dismiss()
   }
-
+  showHelp () {
+    let addForm = this.modalCtrl.create(ReadingsHelpPage);
+    addForm.present();
+  }
 }
