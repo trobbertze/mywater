@@ -1,5 +1,5 @@
 import { Injectable }    from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -82,10 +82,9 @@ export class RestrictionLevelsService {
         functionValuesX.push(entry.timestamp)
         functionValuesY.push(parseFloat(entry.value))
       })
-      var results = []
-        var index = findIntervalLeftBorderIndex(pointToEvaluate, functionValuesX)
-        if (index == functionValuesX.length - 1)
-          index--
+      var index = findIntervalLeftBorderIndex(pointToEvaluate, functionValuesX)
+      if (index == functionValuesX.length - 1)
+        index--
       return linearInterpolation(pointToEvaluate, functionValuesX[index], functionValuesY[index]
         , functionValuesX[index + 1], functionValuesY[index + 1])
     }
@@ -149,11 +148,13 @@ export class RestrictionLevelsService {
       return number.toFixed(Math.max(0, ~~decimals)).replace(new RegExp(re, 'g'), '$&,');
   };
   getCostForStep (forMonth, step, value) {
+    let restrictionLevel = this.getRestrictionLevel(forMonth)
     return {
       string: 'Step ' + (step + 1) + ': ' +
-        this.format(value, 3, 3) + 'kl @ ' + 'R' + this.format(LEVELCOST[3][step], 2, 3) +
-        ' = R' + this.format(value * LEVELCOST[3][step], 2, 3),
-      value: value * LEVELCOST[3][step]
+              this.format(value, 3, 3) + 'kl @ ' +
+              'R' + this.format(LEVELCOST[restrictionLevel][step], 2, 3) +
+              ' = R' + this.format(value * LEVELCOST[restrictionLevel][step], 2, 3),
+      value: value * LEVELCOST[restrictionLevel][step]
     }
   }
   getCostEntries (forMonth, data) {

@@ -163,7 +163,6 @@ export class StatsPage {
 
     restrictionStepLevels.forEach((level) => {
       steps.push([])
-      let stepItems = []
       data.forEach((item) => {
         steps[steps.length - 1].push({
           x: item.x,

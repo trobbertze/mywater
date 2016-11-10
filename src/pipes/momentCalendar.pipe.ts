@@ -4,7 +4,7 @@ declare let moment: any
 
 @Pipe({name: 'momentCalendar'})
 export class MomentCalendarPipe implements PipeTransform {
-  transform(value: string, args: string[]): any {
+  transform(value: string): any {
     if (!value) return value;
 
     return moment(value).calendar(null, {

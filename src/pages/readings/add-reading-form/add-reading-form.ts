@@ -35,7 +35,7 @@ export class AddReadingForm {
       this.form.controls['reading'].setValue(this.editReading.value)
       this.form.controls['timestamp'].setValue(moment(this.editReading.timestamp).format('YYYY-MM-DDTHH:mmZ'))
     } else {
-      this.form.controls['timestamp'].setValue(moment(firebase.database.ServerValue.TIMESTAMP).format('YYYY-MM-DDTHH:mmZ'))
+      this.form.controls['timestamp'].setValue(moment().format('YYYY-MM-DDTHH:mmZ'))
     }
   }
   ionViewWillEnter () {

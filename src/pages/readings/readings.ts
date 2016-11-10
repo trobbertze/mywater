@@ -22,7 +22,7 @@ export class ReadingsPage {
   ionViewWillEnter () {
     this.authSubscription = this.af.auth.subscribe(auth => {
       this.auth = auth
-      if (this.auth) {
+      if (this.auth && !this.readings) {
         let loader = this.loadingCtrl.create({
           content: 'Fetching meter readings...'
         });
