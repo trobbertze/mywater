@@ -12,8 +12,8 @@ import { LandingPage } from '../pages/auth/landing/landing'
   template: `<ion-nav [root]="rootPage" swipeBackEnabled="false"></ion-nav>`
 })
 export class MyApp {
-  @ViewChild(Nav) nav: Nav;
-
+  @ViewChild(Nav) nav: Nav
+  rootPage: any
   constructor(platform: Platform, private af: AngularFire) {
       platform.ready().then(() => {
          this.af.auth.subscribe((auth) => {
