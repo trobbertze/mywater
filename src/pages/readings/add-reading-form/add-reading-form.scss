@@ -1,3 +1,10 @@
-page-add-form {
-
+page-add-reading-form {
+  .help-message {
+    font-size: 1.2em;
+    margin: 0.8em;
+    text-align: center;
+    position: absolute;
+    bottom: 70px;
+    width: calc(100% - 45px);
+  }
 }

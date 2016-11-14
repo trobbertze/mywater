@@ -21,7 +21,9 @@
         </ion-segment>
         <ion-card *ngIf="filter != 'allTime'">
           <ion-card-content>
-            {{ restrictionNotice }}
+            <ul>
+              <li *ngFor="let costEntry of costEntries">{{ costEntry }} </li>
+            </ul>
           </ion-card-content>
         </ion-card>
         <ion-card>
@@ -36,9 +38,7 @@
         </ion-card>
         <ion-card *ngIf="filter != 'allTime'">
           <ion-card-content>
-            <ul>
-              <li *ngFor="let costEntry of costEntries">{{ costEntry }} </li>
-            </ul>
+            {{ restrictionNotice }}
           </ion-card-content>
         </ion-card>
       </div>

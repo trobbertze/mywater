@@ -33,6 +33,9 @@
     </div>
   </form>
   <ion-fab bottom center>
-    <button ion-fab mini (click)="showHelp()"><ion-icon name="help-circle"></ion-icon></button>
+    <button ion-fab (click)="showHelp()" class="help-button"><ion-icon name="help-circle"></ion-icon></button>
   </ion-fab>
+  <div class="help-message" (click)="showHelp()">
+    I need help!
+  </div>
 </ion-content>
