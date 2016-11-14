@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, NgZone } from '@angular/core'
 import { AngularFire } from 'angularfire2'
 import { NavController, AlertController, ModalController, LoadingController } from 'ionic-angular'
 
@@ -26,12 +26,15 @@ export class StatsPage {
   showEmptyMessage: boolean
   emptyStatus: any
   emptyMessage: String
+  isLoaded: boolean
   constructor(public navCtrl: NavController,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
     private af: AngularFire,
-    private restrictions: RestrictionLevelsService) {
+    private restrictions: RestrictionLevelsService,
+    private ngZone: NgZone) {
+      this.isLoaded = false
       this.showEmptyMessage = false
       this.emptyStatus = {}
       this.readingsList = []
@@ -52,17 +55,27 @@ export class StatsPage {
         if (!this.readings) {
           this.readings = firebase.database().ref('/readings/' + this.auth.uid)
           this.readings.on('value', (readings) => {
-            loader.dismiss()
             this.updateEmptyStatus('readings', readings.val())
             this.updateReadings(readings.val())
+            setTimeout(() => {
+              this.ngZone.run(() => {
+                loader.dismiss()
+                this.isLoaded = true
+              })
+            }, 100)
           });
         }
         if (!this.invoices) {
           this.invoices = firebase.database().ref('/invoices/' + this.auth.uid)
           this.invoices.on('value', (invoices) => {
-            loader.dismiss()
             this.updateEmptyStatus('invoices', invoices.val())
             this.updateInvoices(invoices.val())
+            setTimeout(() => {
+              this.ngZone.run(() => {
+                loader.dismiss()
+                this.isLoaded = true
+              })
+            }, 100)
           });
         }
       }
@@ -139,7 +152,20 @@ export class StatsPage {
     scales: {
       xAxes: [{
         type: 'time',
-        position: 'bottom'
+        position: 'bottom',
+        ticks: {
+          callback: function(label, index, labels) {
+            return moment(label, 'MMM DD, YYY').format('DD MMM')
+          },
+          maxRotation: 90,
+          minRotation: 90
+        }
+      }],
+      yAxis: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'kl'
+        }
       }]
     }
   }

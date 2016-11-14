@@ -20,7 +20,7 @@
       <div *ngIf="form.controls.newReading.errors && (submitted || form.controls.newReading.touched) && form.controls.newReading.errors.required" class="error-box">
         * New reading is required
       </div>
-      <div *ngIf="form.controls.previousReading.errors && (submitted || form.controls.previousReading.touched) && form.controls.previousReading.errors.pattern" class="error-box">
+      <div *ngIf="form.controls.newReading.errors && (submitted || form.controls.newReading.touched) && form.controls.newReading.errors.pattern" class="error-box">
         * New reading must be a number
       </div>
       <ion-item>
