@@ -22,6 +22,7 @@ export class StatsPage {
   filter: any
   restrictionNotice: any
   readingsList: any
+  invoiceReadingsList: any
   costEntries: String[]
   showEmptyMessage: boolean
   emptyStatus: any
@@ -38,6 +39,7 @@ export class StatsPage {
       this.showEmptyMessage = false
       this.emptyStatus = {}
       this.readingsList = []
+      this.invoiceReadingsList = []
       this.filter = 'thisMonth'
       this.restrictions.getBanner('thisMonth').then((banner) => {
         this.restrictionNotice = banner
@@ -114,14 +116,14 @@ export class StatsPage {
     }
   }
   updateInvoices (invoices) {
-    this.readingsList = this.readingsList.filter((o) => o.isReading)
+    this.invoiceReadingsList = [] // this.readingsList.filter((o) => o.isReading)
     for(let key in invoices) {
-      this.readingsList.push({
+      this.invoiceReadingsList.push({
         timestamp: invoices[key].periodEndDate,
         value: invoices[key].newReading,
         isReading: false
       })
-      this.readingsList.push({
+      this.invoiceReadingsList.push({
         timestamp: invoices[key].periodStartDate,
         value: invoices[key].previousReading,
         isReading: false
@@ -130,7 +132,7 @@ export class StatsPage {
     this.applyFilter(this.filter)
   }
   updateReadings (readings) {
-    this.readingsList = this.readingsList.filter((o) => !o.isReading)
+    this.readingsList = [] // this.readingsList.filter((o) => !o.isReading)
     for(let key in readings) {
       this.readingsList.push({
         timestamp: readings[key].timestamp,
@@ -144,14 +146,21 @@ export class StatsPage {
     this.authSubscription.unsubscribe()
   }
   public lineChartData:Array<any> = [
-    {data: [], label: 'Readings'}
+    {data: [], label: 'Real usage'}
   ]
   public lineChartOptions:any = {
     animation: {},
     responsive: true,
+    legendCallback: function(chart) {
+      console.log(chart)
+      return '<div>test</div>'
+    },
     scales: {
       xAxes: [{
         type: 'time',
+        time: {
+            unit: 'week'
+        },
         position: 'bottom',
         ticks: {
           callback: function(label, index, labels) {
@@ -180,6 +189,10 @@ export class StatsPage {
       lineTension: 0.2
     },
     {
+      borderColor: 'rgb(205, 93, 93)',
+      backgroundColor: 'rgba(0, 0, 0, 0)'
+    },
+    {
       borderColor: 'rgb(102, 255, 102)',
       backgroundColor: 'rgba(0, 0, 0, 0)'
     },
@@ -206,20 +219,9 @@ export class StatsPage {
   ]
   public lineChartLegend:boolean = false;
   public lineChartType:string = 'line';
-  applyFilter (filter) {
-
-    this.restrictions.getBanner(filter).then((banner) => {
-      this.restrictionNotice = banner
-    })
-
+  buildData (list, filter) {
     let data:Array<any> = new Array()
-    let steps = []
-    let counter = [1, 2, 3, 4, 5, 6]
-    let restrictionStepLevels = []
-    counter.forEach((o) => {
-      restrictionStepLevels.push(this.restrictions.getRestrictionStepLevel(filter, o, this.readingsList))
-    })
-    this.readingsList.forEach((reading) => {
+    list.forEach((reading) => {
         if (filter === 'thisMonth' && (moment(reading.timestamp).month() === moment().month())) {
           data.push({
             x: reading.timestamp,
@@ -244,26 +246,64 @@ export class StatsPage {
       let month = this.restrictions.getMonthStartEnd(filter)
       data.push({
         x: month.start,
-        y: this.restrictions.getBeginningOfMonthReading(filter, this.readingsList)
+        y: this.restrictions.getBeginningOfMonthReading(filter, list)
       })
       data.push({
         x: month.end,
-        y: this.restrictions.getEndOfMonthReading(filter, this.readingsList)
+        y: this.restrictions.getEndOfMonthReading(filter, list)
       })
     }
     else if (filter === 'thisMonth') {
       let month = this.restrictions.getMonthStartEnd(filter)
       data.push({
         x: month.start,
-        y: this.restrictions.getBeginningOfMonthReading(filter, this.readingsList)
+        y: this.restrictions.getBeginningOfMonthReading(filter, list)
       })
     }
 
     data = data.sort((a, b) => a.x - b.x )
 
+    return data
+  }
+  normaliseReadingList () {
+    if (this.readingsList.length === 1 &&
+    this.invoiceReadingsList.length > 0) {
+      let invoiceReading = this.invoiceReadingsList.find((o) => {
+        return o.timestamp <  this.readingsList[0].timestamp &&
+        parseFloat(o.value) < parseFloat(this.readingsList[0].value)
+      })
+      let returnArray = [invoiceReading, this.readingsList[0]]
+      return returnArray
+    }
+    return this.readingsList
+  }
+  applyFilter (filter) {
+    this.restrictions.getBanner(filter).then((banner) => {
+      this.restrictionNotice = banner
+    })
+
+    let readingData:Array<any> = new Array()
+    let invoiceData:Array<any> = new Array()
+    let steps = []
+    let counter = [1, 2, 3, 4, 5, 6]
+    let restrictionStepLevels = []
+    let normalisedReadingList = this.normaliseReadingList()
+    counter.forEach((o) => {
+      restrictionStepLevels.push(this.restrictions.getRestrictionStepLevel(filter, o, normalisedReadingList))
+    })
+
+    readingData = this.buildData(normalisedReadingList, filter)
+    invoiceData = this.buildData(this.invoiceReadingsList, filter)
+
     restrictionStepLevels.forEach((level) => {
       steps.push([])
-      data.forEach((item) => {
+      readingData.forEach((item) => {
+        steps[steps.length - 1].push({
+          x: item.x,
+          y: level
+        })
+      })
+      invoiceData.forEach((item) => {
         steps[steps.length - 1].push({
           x: item.x,
           y: level
@@ -273,29 +313,26 @@ export class StatsPage {
 
     let _lineChartData:Array<any> = new Array()
     _lineChartData[0] = {
-      data: data,
-      label: 'Readings'
+      data: readingData
+    }
+    _lineChartData[1] = {
+      data: invoiceData
     }
     if (filter !== 'allTime') {
-      _lineChartData[1] = {
-        data: steps[0],
-        label: 'Step 1'
-      }
       _lineChartData[2] = {
-        data: steps[1],
-        label: 'Step 2'
+        data: steps[0]
       }
       _lineChartData[3] = {
-        data: steps[2],
-        label: 'Step 3'
+        data: steps[1]
       }
       _lineChartData[4] = {
-        data: steps[3],
-        label: 'Step 4'
+        data: steps[2]
       }
       _lineChartData[5] = {
-        data: steps[4],
-        label: 'Step 5'
+        data: steps[3]
+      }
+      _lineChartData[6] = {
+        data: steps[4]
       }
     }
     this.lineChartData = _lineChartData;

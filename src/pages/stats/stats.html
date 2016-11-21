@@ -28,6 +28,14 @@
         </ion-card>
         <ion-card>
           <ion-card-content>
+            <div class="legend">
+              <div class="actual">
+                <span></span>Actual usage
+              </div>
+              <div class="invoices">
+                <span></span>Invoice readings
+              </div>
+            </div>
             <canvas baseChart width="400" height="400"
                          [datasets]="lineChartData"
                          [options]="lineChartOptions"

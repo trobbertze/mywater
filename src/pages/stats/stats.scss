@@ -21,4 +21,26 @@ page-stats {
     margin-top: 2em;
     text-align: center;
   }
+  .legend {
+    // display: flex;
+    margin-bottom: 1em;
+    font-size: 0.8em;
+    div {
+      flex: 1;
+    }
+    span{
+      display: inline-block;
+      width: 50px;
+      height: 6px;
+      margin-right: 6px;
+      position: relative;
+
+    }
+    .actual span {
+      border-top: 3px solid rgba(57,126,245,1);
+    }
+    .invoices span{
+      border-top: 3px solid rgb(205, 93, 93);
+    }
+  }
 }
