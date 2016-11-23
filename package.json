@@ -28,7 +28,7 @@
     "angularfire2": "^2.0.0-beta.6",
     "chart.js": "^2.3.0",
     "firebase": "^3.5.3",
-    "ionic-angular": "2.0.0-rc.1",
+    "ionic-angular": "^2.0.0-rc.3",
     "ionic-native": "2.2.3",
     "ionicons": "3.0.0",
     "lodash": "^4.16.6",
@@ -37,7 +37,7 @@
     "zone.js": "0.6.21"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "0.0.38",
+    "@ionic/app-scripts": "0.0.46",
     "@types/request": "0.0.30",
     "typescript": "2.0.6"
   },
@@ -55,7 +55,8 @@
         "APP_ID": "1502963093064140",
         "APP_NAME": "My-Water"
       }
-    }
+    },
+    "cordova-plugin-crosswalk-webview"
   ],
   "cordovaPlatforms": [
     "ios",

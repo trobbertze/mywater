@@ -32,7 +32,7 @@ export class ResetPasswordPage {
     let loader = this.loadingCtrl.create({
       content: 'Checking email...'
     });
-    firebase.auth().sendPasswordResetEmail(this.form.controls['email'].value)
+    firebase.auth().sendPasswordResetEmail(this.form.controls['email'].value.trim())
       .then(() => {
         loader.dismiss()
         let alert = this.alertCtrl.create({
@@ -45,6 +45,10 @@ export class ResetPasswordPage {
         });
       }, (error) => {
         loader.dismiss()
+        let message = error.message
+        if (error.code === 'auth/invalid-email') {
+          message += '  You used "' + this.form.controls.email.value + '"'
+        }
         let alert = this.alertCtrl.create({
           title: 'Password reset error.',
           subTitle: error.message,

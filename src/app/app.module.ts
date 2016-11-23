@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core'
-import { IonicApp, IonicModule } from 'ionic-angular'
+import { NgModule, ErrorHandler } from '@angular/core'
+import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular'
 import { ReactiveFormsModule } from '@angular/forms'
 import { HttpModule }    from '@angular/http'
 import { AngularFireModule } from 'angularfire2'
@@ -84,7 +84,8 @@ export const firebaseConfig = {
   ],
   providers: [
     ValidationService,
-    RestrictionLevelsService
+    RestrictionLevelsService,
+    {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
 export class AppModule {}

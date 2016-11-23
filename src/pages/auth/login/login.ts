@@ -57,7 +57,7 @@ export class LoginPage {
       });
       loader.present()
       this.af.auth.login({
-        email: this.form.controls['email'].value,
+        email: this.form.controls['email'].value.trim(),
         password: this.form.controls['password'].value,
       },
       {
@@ -85,9 +85,13 @@ export class LoginPage {
     this.nav.push(ResetPasswordPage)
   }
   showError (error) {
+    let message = error.message
+    if (error.code === 'auth/invalid-email') {
+      message += '  You used "' + this.form.controls.email.value + '"'
+    }
     let alert = this.alertCtrl.create({
       title: 'Sign up error',
-      subTitle: error.message,
+      subTitle: message,
       buttons: ['OK']
     });
     alert.present();
