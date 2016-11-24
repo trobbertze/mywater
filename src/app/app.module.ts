@@ -8,6 +8,9 @@ import { ChartsModule } from 'ng2-charts/ng2-charts'
 
 import { ValidationService } from '../providers/validation.service'
 import { RestrictionLevelsService } from '../providers/restrictionLevel.service'
+import { UserService} from '../providers/user.service'
+import { RestApiService} from '../providers/restapi.service'
+import { CitiesService} from '../providers/cities.service'
 
 import { SortByDatePipe }  from '../pipes/sortByDate.pipe'
 import { MomentCalendarPipe }  from '../pipes/momentCalendar.pipe'
@@ -85,6 +88,9 @@ export const firebaseConfig = {
   providers: [
     ValidationService,
     RestrictionLevelsService,
+    RestApiService,
+    UserService,
+    CitiesService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

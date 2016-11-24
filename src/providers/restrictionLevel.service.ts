@@ -1,7 +1,5 @@
-import { Injectable }    from '@angular/core';
-import { Http } from '@angular/http';
-
-import 'rxjs/add/operator/toPromise';
+import { Injectable }    from '@angular/core'
+import { Http } from '@angular/http'
 
 declare let firebase: any
 declare let moment: any
@@ -15,7 +13,7 @@ let LEVELCOST = {
 
 @Injectable()
 export class RestrictionLevelsService {
-  private url =   firebase.database().ref().toString() + '/restrictionLevels.json';
+  private url =   firebase.database().ref().toString() + '/restrictionLevels.json'
   private restrictions: any[] = []
   constructor(private http: Http) {
   }

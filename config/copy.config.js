@@ -31,14 +31,6 @@ module.exports = {
     {
       src: 'node_modules/moment/min/moment.min.js',
       dest: '{{WWW}}/libs/moment.js'
-    },
-    {
-      src: 'node_modules/intl/dist/intl.min.js',
-      dest: '{{WWW}}/libs/intl.min.js'
-    },
-    {
-      src: 'node_modules/intl/locale-data/jsonp/en.js',
-      dest: '{{WWW}}/libs/en.js'
     }
   ]
 };

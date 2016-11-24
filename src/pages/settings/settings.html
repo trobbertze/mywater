@@ -6,6 +6,26 @@
 
 <ion-content padding>
   <div padding>
+    <div class="email">
+      {{ email }}
+    </div>
     <button ion-button large block outline (click)="logOut()">Log Out</button>
   </div>
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="saveSettings(form.value, form.valid)">
+        <ion-list>
+          <ion-item>
+            <ion-label floating>City</ion-label>
+            <ion-select formControlName="city">
+              <ion-option *ngFor="let city of cities" value="{{ city.id }}">{{ city.name }}</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+        <div padding>
+          <button ion-button large block outline type="submit">Save</button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
