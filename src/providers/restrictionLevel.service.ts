@@ -1,5 +1,6 @@
 import { Injectable }    from '@angular/core'
 import { Http } from '@angular/http'
+import { CitiesService } from './cities.service'
 
 declare let firebase: any
 declare let moment: any
@@ -15,7 +16,8 @@ let LEVELCOST = {
 export class RestrictionLevelsService {
   private url =   firebase.database().ref().toString() + '/restrictionLevels.json'
   private restrictions: any[] = []
-  constructor(private http: Http) {
+  constructor(private http: Http,
+    private cities: CitiesService) {
   }
   refresh (): Promise<any[]> {
     return this.http.get(this.url)
@@ -130,19 +132,12 @@ export class RestrictionLevelsService {
     return returnData
   }
   getRestrictionStepLevel (forMonth, step, data) {
-    let startLevel = this.getBeginningOfMonthReading(forMonth, data)
-    switch (step) {
-      case 1:
-        return startLevel + LEVELS[0]
-      case 2:
-        return startLevel + LEVELS[1]
-      case 3:
-        return startLevel + LEVELS[2]
-      case 4:
-        return startLevel + LEVELS[3]
-      case 5:
-        return startLevel + LEVELS[4]
-    }
+    return new Promise((accept, reject) => {
+      let startLevel = this.getBeginningOfMonthReading(forMonth, data)
+      this.cities.getLevels().then(levels => {
+        accept(startLevel + levels[step - 1])
+      })
+    })
   }
   format (number, decimals, sections) {
       var re = '\\d(?=(\\d{' + (sections || 3) + '})+' + (decimals > 0 ? '\\.' : '$') + ')';

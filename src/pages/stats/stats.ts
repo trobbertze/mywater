@@ -1,3 +1,5 @@
+import async from 'async'
+
 import { Component, NgZone } from '@angular/core'
 import { AngularFire } from 'angularfire2'
 import { NavController, AlertController, ModalController, LoadingController } from 'ionic-angular'
@@ -15,10 +17,6 @@ declare let moment: any
   templateUrl: 'stats.html'
 })
 export class StatsPage {
-  readings: any
-  invoices: any
-  auth: any
-  authSubscription: any
   filter: any
   restrictionNotice: any
   readingsList: any
@@ -28,6 +26,7 @@ export class StatsPage {
   emptyStatus: any
   emptyMessage: String
   isLoaded: boolean
+  loader: any
   constructor(public navCtrl: NavController,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
@@ -41,109 +40,97 @@ export class StatsPage {
       this.readingsList = []
       this.invoiceReadingsList = []
       this.filter = 'thisMonth'
-      this.restrictions.getBanner('thisMonth').then((banner) => {
-        this.restrictionNotice = banner
+      // this.restrictions.getBanner('thisMonth').then((banner) => {
+      //   this.restrictionNotice = banner
+      // })
+
+      this.af.auth.subscribe(auth => {
+        firebase.database().ref('/readings/' + auth.uid)
+          .on('value', this.updateReadings.bind(this))
+        firebase.database().ref('/invoices/' + auth.uid)
+          .on('value', this.updateInvoices.bind(this))
       })
   }
   ionViewWillEnter () {
-    this.authSubscription = this.af.auth.subscribe(auth => {
-      this.auth = auth
-      if (this.auth && !this.readings) {
-        let loader = this.loadingCtrl.create({
-          content: 'Fetching data...'
-        });
-        loader.present()
+    if (this.emptyStatus['readings'] && this.emptyStatus['invoices']) {
+      this.applyFilter(this.filter)
+    } else {
+      this.loader = this.loadingCtrl.create({
+        content: 'Fetching data...'
+      });
+      this.loader.present()
+    }
+  }
+  updateEmptyStatus (item, data) {
+    this.ngZone.run(() => {
+      this.emptyStatus[item] = data === null ? false : true
 
-        if (!this.readings) {
-          this.readings = firebase.database().ref('/readings/' + this.auth.uid)
-          this.readings.on('value', (readings) => {
-            this.updateEmptyStatus('readings', readings.val())
-            this.updateReadings(readings.val())
-            setTimeout(() => {
-              this.ngZone.run(() => {
-                loader.dismiss()
-                this.isLoaded = true
-              })
-            }, 100)
-          });
-        }
-        if (!this.invoices) {
-          this.invoices = firebase.database().ref('/invoices/' + this.auth.uid)
-          this.invoices.on('value', (invoices) => {
-            this.updateEmptyStatus('invoices', invoices.val())
-            this.updateInvoices(invoices.val())
-            setTimeout(() => {
-              this.ngZone.run(() => {
-                loader.dismiss()
-                this.isLoaded = true
-              })
-            }, 100)
-          });
-        }
+      if (!this.emptyStatus.invoices && !this.emptyStatus.readings) {
+        this.emptyMessage =
+          `
+          Lets get going by loading at least one water invoice and
+          recording at least one water meter reading.
+          `
+
+        this.showEmptyMessage = true
+      }
+      else if (!this.emptyStatus.invoices && this.emptyStatus.readings) {
+        this.emptyMessage =
+        `
+        You have recorded some water meter readings.  Please navigate to
+        the 'Invoices' section and load at least one invoice.
+        `
+        this.showEmptyMessage = true
+      }
+      else if (this.emptyStatus.invoices && !this.emptyStatus.readings) {
+        this.emptyMessage =
+        `
+        You have loaded some water invoices.  Please navigate to the
+        'Readings' section and record some water meter readings.
+        `
+        this.showEmptyMessage = true
+      }
+      else {
+        this.showEmptyMessage = false
       }
     })
   }
-  updateEmptyStatus (item, data) {
-    this.emptyStatus[item] = data === null ? false : true
-
-    if (!this.emptyStatus.invoices && !this.emptyStatus.readings) {
-      this.emptyMessage =
-        `
-        Lets get going by loading at least one water invoice and
-        recording at least one water meter reading.
-        `
-
-      this.showEmptyMessage = true
-    }
-    else if (!this.emptyStatus.invoices && this.emptyStatus.readings) {
-      this.emptyMessage =
-      `
-      You have recorded some water meter readings.  Please navigate to
-      the 'Invoices' section and load at least one invoice.
-      `
-      this.showEmptyMessage = true
-    }
-    else if (this.emptyStatus.invoices && !this.emptyStatus.readings) {
-      this.emptyMessage =
-      `
-      You have loaded some water invoices.  Please navigate to the
-      'Readings' section and record some water meter readings.
-      `
-      this.showEmptyMessage = true
-    }
-    else {
-      this.showEmptyMessage = false
-    }
-  }
   updateInvoices (invoices) {
-    this.invoiceReadingsList = [] // this.readingsList.filter((o) => o.isReading)
+    invoices = invoices.val()
+    this.updateEmptyStatus('invoices', invoices)
+    this.invoiceReadingsList = []
     for(let key in invoices) {
       this.invoiceReadingsList.push({
         timestamp: invoices[key].periodEndDate,
-        value: invoices[key].newReading,
-        isReading: false
+        value: parseFloat(invoices[key].newReading),
       })
       this.invoiceReadingsList.push({
         timestamp: invoices[key].periodStartDate,
-        value: invoices[key].previousReading,
-        isReading: false
+        value: parseFloat(invoices[key].previousReading),
       })
     }
-    this.applyFilter(this.filter)
+    if (this.emptyStatus['readings']) {
+      this.isLoaded = true
+      if (this.loader)  this.loader.dismiss()
+      this.applyFilter(this.filter)
+    }
   }
   updateReadings (readings) {
-    this.readingsList = [] // this.readingsList.filter((o) => !o.isReading)
+    this.isLoaded = true
+    readings = readings.val()
+    this.updateEmptyStatus('readings', readings)
+    this.readingsList = []
     for(let key in readings) {
       this.readingsList.push({
         timestamp: readings[key].timestamp,
-        value: readings[key].value,
-        isReading: true
+        value: parseFloat(readings[key].value),
       })
     }
-    this.applyFilter(this.filter)
-  }
-  ionViewDidLeave () {
-    this.authSubscription.unsubscribe()
+    if (this.emptyStatus['invoices']) {
+      this.isLoaded = true
+      if (this.loader) this.loader.dismiss()
+      this.applyFilter(this.filter)
+    }
   }
   public lineChartData:Array<any> = [
     {data: [], label: 'Real usage'}
@@ -152,7 +139,6 @@ export class StatsPage {
     animation: {},
     responsive: true,
     legendCallback: function(chart) {
-      console.log(chart)
       return '<div>test</div>'
     },
     scales: {
@@ -284,65 +270,93 @@ export class StatsPage {
 
     let readingData:Array<any> = new Array()
     let invoiceData:Array<any> = new Array()
-    let steps = []
-    let counter = [1, 2, 3, 4, 5, 6]
-    let restrictionStepLevels = []
-    let normalisedReadingList = this.normaliseReadingList()
-    counter.forEach((o) => {
-      restrictionStepLevels.push(this.restrictions.getRestrictionStepLevel(filter, o, normalisedReadingList))
-    })
 
+    let normalisedReadingList = this.normaliseReadingList()
     readingData = this.buildData(normalisedReadingList, filter)
     invoiceData = this.buildData(this.invoiceReadingsList, filter)
 
-    restrictionStepLevels.forEach((level) => {
-      steps.push([])
-      readingData.forEach((item) => {
-        steps[steps.length - 1].push({
-          x: item.x,
-          y: level
+    let setRestrictionStepLevels = function(done) {
+      let restrictionStepLevels = []
+      let counter = [1, 2, 3, 4, 5, 6]
+      async.each(counter,
+        (o , callback) => {
+          this.restrictions.getRestrictionStepLevel(filter, o, normalisedReadingList)
+            .then(level => {
+              restrictionStepLevels.push(level)
+              callback()
+          })
+        }, (err) => {
+          if (err) console.log(err)
+          done(err, restrictionStepLevels)
+        }
+      )
+    }.bind(this)
+
+    let buildSteps = function(restrictionStepLevels, done) {
+      let steps = []
+      restrictionStepLevels.forEach((level) => {
+        steps.push([])
+        readingData.forEach((item) => {
+          steps[steps.length - 1].push({
+            x: item.x,
+            y: level
+          })
+        })
+        invoiceData.forEach((item) => {
+          steps[steps.length - 1].push({
+            x: item.x,
+            y: level
+          })
         })
       })
-      invoiceData.forEach((item) => {
-        steps[steps.length - 1].push({
-          x: item.x,
-          y: level
-        })
-      })
-    })
+      done(null, steps)
+    }.bind(this)
 
-    let _lineChartData:Array<any> = new Array()
-    _lineChartData[0] = {
-      data: readingData
-    }
-    _lineChartData[1] = {
-      data: invoiceData
-    }
-    if (filter !== 'allTime') {
-      _lineChartData[2] = {
-        data: steps[0]
-      }
-      _lineChartData[3] = {
-        data: steps[1]
-      }
-      _lineChartData[4] = {
-        data: steps[2]
-      }
-      _lineChartData[5] = {
-        data: steps[3]
-      }
-      _lineChartData[6] = {
-        data: steps[4]
-      }
-    }
-    this.lineChartData = _lineChartData;
+    let buildLineChartData = function(steps, done) {
+        let _lineChartData:Array<any> = new Array()
+        _lineChartData[0] = {
+          data: readingData
+        }
+        _lineChartData[1] = {
+          data: invoiceData
+        }
+        if (filter !== 'allTime') {
+          _lineChartData[2] = {
+            data: steps[0]
+          }
+          _lineChartData[3] = {
+            data: steps[1]
+          }
+          _lineChartData[4] = {
+            data: steps[2]
+          }
+          _lineChartData[5] = {
+            data: steps[3]
+          }
+          _lineChartData[6] = {
+            data: steps[4]
+          }
+        }
+        this.lineChartData = _lineChartData;
+        console.log('done')
+        done()
+    }.bind(this)
 
-    if (filter != 'allTime') {
-      this.costEntries = this.restrictions.getCostEntries(filter, this.readingsList)
-    }
-    else {
-      this.costEntries = []
-    }
+    async.waterfall([
+      setRestrictionStepLevels,
+      buildSteps,
+      buildLineChartData
+    ])
+
+
+    //
+    //
+    // if (filter != 'allTime') {
+    //   this.costEntries = this.restrictions.getCostEntries(filter, this.readingsList)
+    // }
+    // else {
+    //   this.costEntries = []
+    // }
   }
   selectedThisMonth () {
       this.applyFilter('thisMonth')

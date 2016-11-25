@@ -26,6 +26,7 @@
     "@ionic/storage": "1.1.6",
     "angular2-moment": "^1.0.0-beta.6",
     "angularfire2": "^2.0.0-beta.6",
+    "async": "^2.1.4",
     "chart.js": "^2.3.0",
     "firebase": "^3.5.3",
     "ionic-angular": "^2.0.0-rc.3",

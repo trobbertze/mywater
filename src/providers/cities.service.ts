@@ -40,4 +40,25 @@ export class CitiesService {
       }
     })
   }
+  getCurrentCity () {
+    return new Promise((accept, reject) => {
+      let getCurrentCity = function (index) {
+        return this.cities[parseInt(index)]
+      }.bind(this)
+      this.user.get().then(user => {
+        if (!this.cities) {
+          this.fetch().then(() => {
+            accept(getCurrentCity(user['city']))
+          })
+        } else {
+          accept(getCurrentCity(user['city']))
+        }
+     })
+    })
+  }
+  getLevels () {
+    return new Promise((accept, reject) => {
+      this.getCurrentCity().then((city) => accept(city['levels']))
+    })
+  }
 }
