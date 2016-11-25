@@ -37,6 +37,7 @@ export class UserService {
         uid: this.auth.uid,
         authToken: this.auth.auth.kd
       }, this.settings).then(result => {
+        this.buildUser(this.settings)
         accept(result)
       })
     })

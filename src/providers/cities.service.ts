@@ -43,6 +43,7 @@ export class CitiesService {
   getCurrentCity () {
     return new Promise((accept, reject) => {
       let getCurrentCity = function (index) {
+        console.log(this.cities[parseInt(index)])
         return this.cities[parseInt(index)]
       }.bind(this)
       this.user.get().then(user => {
@@ -59,6 +60,16 @@ export class CitiesService {
   getLevels () {
     return new Promise((accept, reject) => {
       this.getCurrentCity().then((city) => accept(city['levels']))
+    })
+  }
+  getLevelCosts () {
+    return new Promise((accept, reject) => {
+      this.getCurrentCity().then((city) => accept(city['levelCost']))
+    })
+  }
+  getRestrictionLevels () {
+    return new Promise((accept, reject) => {
+      this.getCurrentCity().then((city) => accept(city['levelDates']))
     })
   }
 }

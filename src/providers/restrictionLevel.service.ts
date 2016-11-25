@@ -14,29 +14,33 @@ let LEVELCOST = {
 
 @Injectable()
 export class RestrictionLevelsService {
-  private url =   firebase.database().ref().toString() + '/restrictionLevels.json'
-  private restrictions: any[] = []
+  // private url =   firebase.database().ref().toString() + '/restrictionLevels.json'
+  // private restrictions: any[] = []
   constructor(private http: Http,
     private cities: CitiesService) {
   }
-  refresh (): Promise<any[]> {
-    return this.http.get(this.url)
-     .toPromise()
-     .then(response => {
-       let data = response.json();
-       data.forEach((item) => {
-         if (item) this.restrictions.push(item)
-       })
-     })
-     .catch((err) => console.log(err));
-  }
+  // refresh (): Promise<any[]> {
+  //   return this.http.get(this.url)
+  //    .toPromise()
+  //    .then(response => {
+  //      let data = response.json();
+  //      data.forEach((item) => {
+  //        if (item) this.restrictions.push(item)
+  //      })
+  //    })
+  //    .catch((err) => console.log(err));
+  // }
   getRestrictionLevel (forMonth) {
-    let forMonthStamp = this.getMonthStartEnd(forMonth).start
-    let restrictionEntry = this.restrictions.find((o) => o.timestamp === forMonthStamp)
-    if (restrictionEntry) {
-      return restrictionEntry.level
-    }
-    return 1
+    return new Promise((accept, reject) => {
+      this.cities.getRestrictionLevels().then((restrictions: Array<{}>) => {
+        let forMonthStamp = this.getMonthStartEnd(forMonth).start
+        let restrictionEntry = restrictions.find((o) => o['timestamp'] === forMonthStamp)
+        if (restrictionEntry) {
+          accept(restrictionEntry['level'])
+        }
+        accept(1)
+      })
+    })
   }
   getMonthStartEnd (forMonth) {
     let startEnd:any = {}
@@ -143,60 +147,72 @@ export class RestrictionLevelsService {
       var re = '\\d(?=(\\d{' + (sections || 3) + '})+' + (decimals > 0 ? '\\.' : '$') + ')';
       return number.toFixed(Math.max(0, ~~decimals)).replace(new RegExp(re, 'g'), '$&,');
   };
-  getCostForStep (forMonth, step, value) {
-    let restrictionLevel = this.getRestrictionLevel(forMonth)
+  getCostForStep (step, levelCosts, value, restrictionLevel) {
     return {
       string: 'Step ' + (step + 1) + ': ' +
               this.format(value, 3, 3) + 'kl @ ' +
-              'R' + this.format(LEVELCOST[restrictionLevel][step], 2, 3) +
-              ' = R' + this.format(value * LEVELCOST[restrictionLevel][step], 2, 3),
-      value: value * LEVELCOST[restrictionLevel][step]
+              'R' + this.format(levelCosts[restrictionLevel][step], 2, 3) +
+              ' = R' + this.format(value * levelCosts[restrictionLevel][step], 2, 3),
+      value: value * levelCosts[restrictionLevel][step]
     }
   }
   getCostEntries (forMonth, data) {
-    let costEntries = []
-    let readings = this.getReadingsForMonth(forMonth, data)
-    let totalReading = parseFloat(readings[readings.length - 1].value) - parseFloat(readings[0].value)
-    let step = 0
-    let totalCost = 0
-    while (totalReading > 0) {
-      if (totalReading - LEVELS[step] > 0) {
-        let cost = this.getCostForStep(forMonth, step, LEVELS[step])
-        costEntries.push(cost.string)
-        totalCost += cost.value
-      } else {
-        let cost = this.getCostForStep(forMonth, step, totalReading)
-        costEntries.push(cost.string)
-        totalCost += cost.value
-      }
-      totalReading -= LEVELS[step]
-      step++
-    }
-    costEntries.push('Total: R' + this.format(totalCost, 2, 3))
-    return costEntries
+    return new Promise((accept, reject) => {
+      let costEntries = []
+      let readings = this.getReadingsForMonth(forMonth, data)
+      let totalReading = parseFloat(readings[readings.length - 1].value) - parseFloat(readings[0].value)
+      let step = 0
+      let totalCost = 0
+
+      this.cities.getLevels().then(levels => {
+        this.cities.getLevelCosts().then(levelCosts => {
+          this.getRestrictionLevel(forMonth).then(restrictionLevel => {
+            while (totalReading > 0) {
+              if (totalReading - levels[step] > 0) {
+                let cost = this.getCostForStep(step, levelCosts, levels[step], restrictionLevel)
+                costEntries.push(cost.string)
+                totalCost += cost.value
+              } else {
+                let cost = this.getCostForStep(step, levelCosts, totalReading, restrictionLevel)
+                costEntries.push(cost.string)
+                totalCost += cost.value
+              }
+              totalReading -= levels[step]
+              step++
+            }
+            costEntries.push('Total: R' + this.format(totalCost, 2, 3))
+            accept(costEntries)
+          })
+        })
+      })
+    })
   }
   getBanner (forMonth) {
-    let _getBanner = (forMonth) => {
-      let restrictionlevel = this.getRestrictionLevel(forMonth)
-      switch (restrictionlevel) {
-        case 1:
-          return 'Level 1 (10% savings) reduction tariffs apply'
-        case 2:
-          return 'Level 2 (20% savings) reduction tariffs apply'
-        case 3:
-          return 'Level 3 (30% savings) reduction tariffs apply'
-        default:
-          return null
-      }
-    }
-    return new Promise((resolve, reject) => {
-      if (this.restrictions.length !== 0) {
-        resolve(_getBanner(forMonth))
-      } else {
-        this.refresh()
-        .then(() => resolve(_getBanner(forMonth)))
-      }
+    return new Promise((accept, reject) => {
+      this.getRestrictionLevel(forMonth).then(restrictionlevel => {
+        switch (restrictionlevel) {
+          case 1:
+            accept('Level 1 (10% savings) reduction tariffs apply')
+          case 2:
+            accept('Level 2 (20% savings) reduction tariffs apply')
+          case 3:
+            accept('Level 3 (30% savings) reduction tariffs apply')
+          default:
+            accept(null)
+        }
+      })
     })
+    // let _getBanner = (forMonth) => {
+    //
+    // }
+    // return new Promise((resolve, reject) => {
+    //   if (this.restrictions.length !== 0) {
+    //     resolve(_getBanner(forMonth))
+    //   } else {
+    //     this.refresh()
+    //     .then(() => resolve(_getBanner(forMonth)))
+    //   }
+    // })
 
   }
 }

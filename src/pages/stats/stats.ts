@@ -342,21 +342,23 @@ export class StatsPage {
         done()
     }.bind(this)
 
+    let buildCosts = function() {
+      if (filter != 'allTime') {
+        this.restrictions.getCostEntries(filter, this.readingsList).then(costEntries => {
+          this.costEntries = costEntries
+        })
+      }
+      else {
+        this.costEntries = []
+      }
+    }.bind(this)
+
     async.waterfall([
       setRestrictionStepLevels,
       buildSteps,
-      buildLineChartData
+      buildLineChartData,
+      buildCosts
     ])
-
-
-    //
-    //
-    // if (filter != 'allTime') {
-    //   this.costEntries = this.restrictions.getCostEntries(filter, this.readingsList)
-    // }
-    // else {
-    //   this.costEntries = []
-    // }
   }
   selectedThisMonth () {
       this.applyFilter('thisMonth')
