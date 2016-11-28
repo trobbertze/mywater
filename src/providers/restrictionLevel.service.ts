@@ -14,27 +14,21 @@ let LEVELCOST = {
 
 @Injectable()
 export class RestrictionLevelsService {
-  // private url =   firebase.database().ref().toString() + '/restrictionLevels.json'
-  // private restrictions: any[] = []
   constructor(private http: Http,
     private cities: CitiesService) {
   }
-  // refresh (): Promise<any[]> {
-  //   return this.http.get(this.url)
-  //    .toPromise()
-  //    .then(response => {
-  //      let data = response.json();
-  //      data.forEach((item) => {
-  //        if (item) this.restrictions.push(item)
-  //      })
-  //    })
-  //    .catch((err) => console.log(err));
-  // }
   getRestrictionLevel (forMonth) {
     return new Promise((accept, reject) => {
       this.cities.getRestrictionLevels().then((restrictions: Array<{}>) => {
+        // console.log(restrictions)
         let forMonthStamp = this.getMonthStartEnd(forMonth).start
-        let restrictionEntry = restrictions.find((o) => o['timestamp'] === forMonthStamp)
+        // console.log(forMonthStamp)
+        let restrictionEntry = restrictions.find((o) => {
+          console.log('-----------------')
+          console.log(o)
+          console.log(forMonthStamp)
+          return o['timeStamp'] === forMonthStamp
+        })
         if (restrictionEntry) {
           accept(restrictionEntry['level'])
         }
@@ -151,9 +145,9 @@ export class RestrictionLevelsService {
     return {
       string: 'Step ' + (step + 1) + ': ' +
               this.format(value, 3, 3) + 'kl @ ' +
-              'R' + this.format(levelCosts[restrictionLevel][step], 2, 3) +
-              ' = R' + this.format(value * levelCosts[restrictionLevel][step], 2, 3),
-      value: value * levelCosts[restrictionLevel][step]
+              'R' + this.format(levelCosts[restrictionLevel - 1][step], 2, 3) +
+              ' = R' + this.format(value * levelCosts[restrictionLevel - 1][step], 2, 3),
+      value: value * levelCosts[restrictionLevel - 1][step]
     }
   }
   getCostEntries (forMonth, data) {
@@ -202,17 +196,5 @@ export class RestrictionLevelsService {
         }
       })
     })
-    // let _getBanner = (forMonth) => {
-    //
-    // }
-    // return new Promise((resolve, reject) => {
-    //   if (this.restrictions.length !== 0) {
-    //     resolve(_getBanner(forMonth))
-    //   } else {
-    //     this.refresh()
-    //     .then(() => resolve(_getBanner(forMonth)))
-    //   }
-    // })
-
   }
 }

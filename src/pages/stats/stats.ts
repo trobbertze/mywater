@@ -338,7 +338,6 @@ export class StatsPage {
           }
         }
         this.lineChartData = _lineChartData;
-        console.log('done')
         done()
     }.bind(this)
 

@@ -43,7 +43,6 @@ export class CitiesService {
   getCurrentCity () {
     return new Promise((accept, reject) => {
       let getCurrentCity = function (index) {
-        console.log(this.cities[parseInt(index)])
         return this.cities[parseInt(index)]
       }.bind(this)
       this.user.get().then(user => {
