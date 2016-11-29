@@ -1,0 +1,22 @@
+<ion-content padding>
+  <ion-card>
+    <ion-card-header>
+      Please select your city.
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="form" (ngSubmit)="saveSettings(form.value, form.valid)">
+        <ion-list>
+          <ion-item>
+            <ion-label floating>City</ion-label>
+            <ion-select formControlName="city">
+              <ion-option *ngFor="let city of cities" value="{{ city.id }}">{{ city.name }}</ion-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+        <div padding>
+          <button ion-button large block outline type="submit">Next</button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

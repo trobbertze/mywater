@@ -10,19 +10,31 @@ export class UserService {
   user: any
   settings: any
   auth: any
+  authSubscription: any
+  getpromises: any
   constructor(private af: AngularFire,
-  private restApi: RestApiService) {}
+  private restApi: RestApiService) {
+    this.getpromises = []
+  }
   get () {
     return new Promise((resolve, reject) => {
       if (this.user) {
         resolve(this.user)
       } else {
-        this.af.auth.subscribe((auth) => {
-          this.auth = auth
-          this.getUserSettings().then(() => {
-            resolve(this.user)
+        if (!this.authSubscription) {
+          this.authSubscription = this.af.auth.subscribe((auth) => {
+            this.auth = auth
+            if (auth) {
+              this.getUserSettings().then(() => {
+                resolve(this.user)
+                this.getpromises.forEach(resolve => resolve(this.user))
+                this.getpromises = []
+              })
+            }
           })
-        })
+        } else {
+          this.getpromises.push(resolve)
+        }
       }
     })
   }
@@ -43,6 +55,11 @@ export class UserService {
     })
   }
   logout () {
+    // this.auth = undefined
+    this.settings = undefined
+    this.user = undefined
+    this.authSubscription.unsubscribe();
+    this.authSubscription = undefined
     this.af.auth.logout()
   }
   private getUserSettings () {

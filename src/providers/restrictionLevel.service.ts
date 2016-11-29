@@ -5,13 +5,6 @@ import { CitiesService } from './cities.service'
 declare let firebase: any
 declare let moment: any
 
-let LEVELS = [6, 10.5, 20, 35, 50]
-let LEVELCOST = {
-  1 : [0, 14.89, 17.41, 25.8, 31.86, 42.03],
-  2 : [0, 15.68, 20.02, 32.65, 48.93, 93.39],
-  3 : [0, 16.54, 23.54, 40.96, 66.41, 200.16]
-}
-
 @Injectable()
 export class RestrictionLevelsService {
   constructor(private http: Http,
@@ -20,18 +13,12 @@ export class RestrictionLevelsService {
   getRestrictionLevel (forMonth) {
     return new Promise((accept, reject) => {
       this.cities.getRestrictionLevels().then((restrictions: Array<{}>) => {
-        // console.log(restrictions)
+        let counter = restrictions.length - 1
         let forMonthStamp = this.getMonthStartEnd(forMonth).start
-        // console.log(forMonthStamp)
-        let restrictionEntry = restrictions.find((o) => {
-          console.log('-----------------')
-          console.log(o)
-          console.log(forMonthStamp)
-          return o['timeStamp'] === forMonthStamp
-        })
-        if (restrictionEntry) {
-          accept(restrictionEntry['level'])
+        while(restrictions[counter]['timeStamp'] < forMonthStamp && counter > 0) {
+          counter--
         }
+        accept(restrictions[counter]['level'])
         accept(1)
       })
     })
@@ -99,6 +86,7 @@ export class RestrictionLevelsService {
     return this.evaluateLinear(monthStartEndDates.end, data)
   }
   getReadingsForMonth (forMonth, data) {
+    console.log('getReadingsForMonth')
     let returnData = []
     data.forEach((reading) => {
       if (forMonth === 'thisMonth' && (moment(reading.timestamp).month() === moment().month())) {
@@ -108,6 +96,7 @@ export class RestrictionLevelsService {
         returnData.push(reading)
       }
     })
+    console.log(returnData)
     if (forMonth === 'lastMonth') {
       let month = this.getMonthStartEnd(forMonth)
       returnData.push({
@@ -126,6 +115,7 @@ export class RestrictionLevelsService {
         value: this.getBeginningOfMonthReading(forMonth, data)
       })
     }
+    console.log(returnData)
     returnData = returnData.sort((a, b) => a.timestamp - b.timestamp )
     return returnData
   }

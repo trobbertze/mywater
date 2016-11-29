@@ -27,6 +27,7 @@ import { InvoicesPage } from '../pages/invoices/invoices'
 import { AddInvoiceForm } from '../pages/invoices/add-invoice-form/add-invoice-form'
 import { StatsPage } from '../pages/stats/stats'
 import { SettingsPage } from '../pages/settings/settings'
+import { SignUpSettingsPage } from '../pages/signUpSettings/signUpSettings'
 import { TabsPage } from '../pages/tabs/tabs'
 
 import { InvoiceHelpPage } from '../pages/invoices/invoice-help/invoice-help'
@@ -53,6 +54,7 @@ export const firebaseConfig = {
     AddInvoiceForm,
     StatsPage,
     SettingsPage,
+    SignUpSettingsPage,
     TabsPage,
     InvoiceHelpPage,
     ReadingsHelpPage,
@@ -81,6 +83,7 @@ export const firebaseConfig = {
     AddInvoiceForm,
     StatsPage,
     SettingsPage,
+    SignUpSettingsPage,
     TabsPage,
     InvoiceHelpPage,
     ReadingsHelpPage

@@ -44,11 +44,6 @@
                          [chartType]="lineChartType"></canvas>
           </ion-card-content>
         </ion-card>
-        <ion-card *ngIf="filter != 'allTime'">
-          <ion-card-content>
-            {{ restrictionNotice }}
-          </ion-card-content>
-        </ion-card>
       </div>
       <div *ngIf="showEmptyMessage === true">
         <img src="assets/logo_small.png">

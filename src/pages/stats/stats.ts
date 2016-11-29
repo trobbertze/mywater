@@ -5,9 +5,12 @@ import { AngularFire } from 'angularfire2'
 import { NavController, AlertController, ModalController, LoadingController } from 'ionic-angular'
 
 import { RestrictionLevelsService } from '../../providers/restrictionLevel.service';
+import { UserService } from '../../providers/user.service';
 
 import { AddInvoiceForm } from '../invoices/add-invoice-form/add-invoice-form'
 import { AddReadingForm } from '../readings/add-reading-form/add-reading-form'
+
+import { SignUpSettingsPage } from '../signUpSettings/signUpSettings'
 
 declare let firebase: any
 declare let moment: any
@@ -18,6 +21,7 @@ declare let moment: any
 })
 export class StatsPage {
   filter: any
+  authSubscription: any
   restrictionNotice: any
   readingsList: any
   invoiceReadingsList: any
@@ -31,6 +35,7 @@ export class StatsPage {
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
     public alertCtrl: AlertController,
+    private user: UserService,
     private af: AngularFire,
     private restrictions: RestrictionLevelsService,
     private ngZone: NgZone) {
@@ -40,60 +45,76 @@ export class StatsPage {
       this.readingsList = []
       this.invoiceReadingsList = []
       this.filter = 'thisMonth'
-      // this.restrictions.getBanner('thisMonth').then((banner) => {
-      //   this.restrictionNotice = banner
-      // })
 
-      this.af.auth.subscribe(auth => {
-        firebase.database().ref('/readings/' + auth.uid)
-          .on('value', this.updateReadings.bind(this))
-        firebase.database().ref('/invoices/' + auth.uid)
-          .on('value', this.updateInvoices.bind(this))
+      this.authSubscription = this.af.auth.subscribe(auth => {
+        if (auth) {
+          firebase.database().ref('/readings/' + auth.uid)
+            .on('value', this.updateReadings.bind(this))
+          firebase.database().ref('/invoices/' + auth.uid)
+            .on('value', this.updateInvoices.bind(this))
+        } else {
+          this.authSubscription.unsubscribe()
+        }
+
       })
   }
   ionViewWillEnter () {
+    this.user.get().then(user => {
+      if(!user['city']) {
+        let signUpSettingsPage = this.modalCtrl.create(SignUpSettingsPage);
+        signUpSettingsPage.onDidDismiss(data => {
+          if (this.emptyStatus['readings'] && this.emptyStatus['invoices']) {
+            this.applyFilter(this.filter)
+          }
+        })
+        signUpSettingsPage.present();
+      }
+      else {
+        this.isLoaded = true
+      }
+    })
     if (this.emptyStatus['readings'] && this.emptyStatus['invoices']) {
       this.applyFilter(this.filter)
     } else {
-      this.loader = this.loadingCtrl.create({
-        content: 'Fetching data...'
-      });
-      this.loader.present()
+      if (!this.isLoaded) {
+        this.loader = this.loadingCtrl.create({
+          content: 'Fetching data...'
+        });
+        this.loader.present()
+      }
     }
   }
   updateEmptyStatus (item, data) {
-    this.ngZone.run(() => {
-      this.emptyStatus[item] = data === null ? false : true
+    this.emptyStatus[item] = data === null ? false : true
 
-      if (!this.emptyStatus.invoices && !this.emptyStatus.readings) {
-        this.emptyMessage =
-          `
-          Lets get going by loading at least one water invoice and
-          recording at least one water meter reading.
-          `
+    if (!this.emptyStatus.invoices && !this.emptyStatus.readings) {
+      this.emptyMessage =
+        `
+        Lets get going by loading at least one water invoice and
+        recording at least one water meter reading.
+        `
 
-        this.showEmptyMessage = true
-      }
-      else if (!this.emptyStatus.invoices && this.emptyStatus.readings) {
-        this.emptyMessage =
-        `
-        You have recorded some water meter readings.  Please navigate to
-        the 'Invoices' section and load at least one invoice.
-        `
-        this.showEmptyMessage = true
-      }
-      else if (this.emptyStatus.invoices && !this.emptyStatus.readings) {
-        this.emptyMessage =
-        `
-        You have loaded some water invoices.  Please navigate to the
-        'Readings' section and record some water meter readings.
-        `
-        this.showEmptyMessage = true
-      }
-      else {
-        this.showEmptyMessage = false
-      }
-    })
+      this.showEmptyMessage = true
+    }
+    else if (!this.emptyStatus.invoices && this.emptyStatus.readings) {
+      this.emptyMessage =
+      `
+      You have recorded some water meter readings.  Please navigate to
+      the 'Invoices' section and load at least one invoice.
+      `
+      this.showEmptyMessage = true
+    }
+    else if (this.emptyStatus.invoices && !this.emptyStatus.readings) {
+      this.emptyMessage =
+      `
+      You have loaded some water invoices.  Please navigate to the
+      'Readings' section and record some water meter readings.
+      `
+      this.showEmptyMessage = true
+    }
+    else {
+      this.showEmptyMessage = false
+    }
   }
   updateInvoices (invoices) {
     invoices = invoices.val()
@@ -110,10 +131,9 @@ export class StatsPage {
       })
     }
     if (this.emptyStatus['readings']) {
-      this.isLoaded = true
-      if (this.loader)  this.loader.dismiss()
       this.applyFilter(this.filter)
     }
+    if (this.loader)  this.loader.dismiss()
   }
   updateReadings (readings) {
     this.isLoaded = true
@@ -127,10 +147,9 @@ export class StatsPage {
       })
     }
     if (this.emptyStatus['invoices']) {
-      this.isLoaded = true
-      if (this.loader) this.loader.dismiss()
       this.applyFilter(this.filter)
     }
+    if (this.loader) this.loader.dismiss()
   }
   public lineChartData:Array<any> = [
     {data: [], label: 'Real usage'}
@@ -343,7 +362,8 @@ export class StatsPage {
 
     let buildCosts = function() {
       if (filter != 'allTime') {
-        this.restrictions.getCostEntries(filter, this.readingsList).then(costEntries => {
+        console.log('buildCosts')
+        this.restrictions.getCostEntries(filter, normalisedReadingList).then(costEntries => {
           this.costEntries = costEntries
         })
       }
