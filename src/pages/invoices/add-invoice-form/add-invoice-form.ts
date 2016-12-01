@@ -94,6 +94,42 @@ export class AddInvoiceForm {
       alert.present();
     }
   }
+  deleteInvoice () {
+    let alert = this.alertCtrl.create({
+      title: 'Are you sure?',
+      subTitle: 'Are you sure you want to remove this invoice?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            alert.dismiss()
+          }
+        },
+        {
+          text: 'Confirm',
+          handler: data => {
+            let loader = this.loadingCtrl.create({
+              content: 'Deleting invoice...'
+            });
+            loader.present()
+            let readings = this.af.database.list('/invoices/' + this.auth.uid);
+            readings.remove(this.editInvoice.$key).then(_ => {
+              loader.dismiss()
+              this.dismiss()
+            }).catch(err => {
+              let alert = this.alertCtrl.create({
+                title: 'Entry error',
+                subTitle: err.message,
+                buttons: ['OK']
+              })
+              alert.present();
+            });
+          }
+        }
+      ]
+    })
+    alert.present();
+  }
   dismiss () {
     this.viewCtrl.dismiss()
   }

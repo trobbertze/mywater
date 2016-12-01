@@ -29,13 +29,13 @@
       </ion-item>
     </ion-list>
     <div padding>
-      <button ion-button large block outline type="submit">Submit</button>
+      <button ion-button large block outline type="submit">Save</button>
     </div>
   </form>
-  <ion-fab bottom center>
+  <div *ngIf="editReading" padding>
+    <button ion-button large block outline color="danger" (click)="deleteReading()">Delete</button>
+  </div>
+  <ion-fab  top right edge>
     <button ion-fab (click)="showHelp()" class="help-button"><ion-icon name="help-circle"></ion-icon></button>
   </ion-fab>
-  <div class="help-message" (click)="showHelp()">
-    I need help!
-  </div>
 </ion-content>

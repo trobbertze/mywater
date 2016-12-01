@@ -12,22 +12,12 @@
       <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
     </ion-fab>
     <ion-list>
-      <ion-item-sliding  *ngFor="let invoice of (invoices | async) | sortByDate">
-        <ion-item>
-          <div class="invoice-entry">
-            <div class="invoice-date">{{ invoice.periodEndDate | momentCalendar }}</div>
-            <div class="invoice-value">{{ invoice.newReading | readingNumberFormat }}</div>
-          </div>
-        </ion-item>
-        <ion-item-options side="right">
-          <button ion-button color="primary" (click)="editInvoice(invoice)">
-            <ion-icon name="create"></ion-icon>
-          </button>
-          <button ion-button color="danger" (click)="deleteInvoice(invoice)">
-            <ion-icon name="remove-circle"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+      <ion-item *ngFor="let invoice of (invoices | async) | sortByDate" (click)="editInvoice(invoice)">
+        <div class="invoice-entry">
+          <div class="invoice-date">{{ invoice.periodEndDate | momentCalendar }}</div>
+          <div class="invoice-value">{{ invoice.newReading | readingNumberFormat }}</div>
+        </div>
+      </ion-item>
     </ion-list>
   </div>
   <div *ngIf="showEmpty === true">

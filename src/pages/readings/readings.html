@@ -12,22 +12,12 @@
       <button ion-fab color="danger" (click)="showAddModal()"><ion-icon name="add"></ion-icon></button>
     </ion-fab>
     <ion-list>
-      <ion-item-sliding  *ngFor="let reading of (readings | async) | sortByDate">
-        <ion-item>
-          <div class="reading-entry">
-            <div class="reading-date">{{ reading.timestamp | momentCalendar }}</div>
-            <div class="reading-value">{{ reading.value | readingNumberFormat }}</div>
-          </div>
-        </ion-item>
-        <ion-item-options side="right">
-          <button ion-button color="primary" (click)="editReading(reading)">
-            <ion-icon name="create"></ion-icon>
-          </button>
-          <button ion-button color="danger" (click)="deleteReading(reading)">
-            <ion-icon name="remove-circle"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
+      <ion-item *ngFor="let reading of (readings | async) | sortByDate" (click)="editReading(reading)">
+        <div class="reading-entry">
+          <div class="reading-date">{{ reading.timestamp | momentCalendar }}</div>
+          <div class="reading-value">{{ reading.value | readingNumberFormat }}</div>
+        </div>
+      </ion-item>
     </ion-list>
   </div>
   <div *ngIf="showEmpty === true">

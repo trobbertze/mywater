@@ -359,7 +359,6 @@ export class StatsPage {
 
     let buildCosts = function() {
       if (filter != 'allTime') {
-        console.log('buildCosts')
         this.restrictions.getCostEntries(filter, normalisedReadingList).then(costEntries => {
           this.costEntries = costEntries
         })

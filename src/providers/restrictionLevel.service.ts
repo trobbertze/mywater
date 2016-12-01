@@ -86,7 +86,6 @@ export class RestrictionLevelsService {
     return this.evaluateLinear(monthStartEndDates.end, data)
   }
   getReadingsForMonth (forMonth, data) {
-    console.log('getReadingsForMonth')
     let returnData = []
     data.forEach((reading) => {
       if (forMonth === 'thisMonth' && (moment(reading.timestamp).month() === moment().month())) {
@@ -96,7 +95,6 @@ export class RestrictionLevelsService {
         returnData.push(reading)
       }
     })
-    console.log(returnData)
     if (forMonth === 'lastMonth') {
       let month = this.getMonthStartEnd(forMonth)
       returnData.push({
@@ -115,7 +113,6 @@ export class RestrictionLevelsService {
         value: this.getBeginningOfMonthReading(forMonth, data)
       })
     }
-    console.log(returnData)
     returnData = returnData.sort((a, b) => a.timestamp - b.timestamp )
     return returnData
   }

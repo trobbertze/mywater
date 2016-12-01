@@ -88,6 +88,42 @@ export class AddReadingForm {
       alert.present();
     }
   }
+  deleteReading () {
+    let alert = this.alertCtrl.create({
+      title: 'Are you sure?',
+      subTitle: 'Are you sure you want to remove this meter reading?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            alert.dismiss()
+          }
+        },
+        {
+          text: 'Confirm',
+          handler: data => {
+            let loader = this.loadingCtrl.create({
+              content: 'Deleting meter reading...'
+            });
+            loader.present()
+            let readings = this.af.database.list('/readings/' + this.auth.uid);
+            readings.remove(this.editReading.$key).then(_ => {
+              loader.dismiss()
+              this.dismiss()
+            }).catch(err => {
+              let alert = this.alertCtrl.create({
+                title: 'Entry error',
+                subTitle: err.message,
+                buttons: ['OK']
+              })
+              alert.present();
+            });
+          }
+        }
+      ]
+    })
+    alert.present();
+  }
   dismiss () {
     this.viewCtrl.dismiss()
   }

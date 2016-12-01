@@ -62,27 +62,6 @@ export class InvoicesPage {
     let addForm = this.modalCtrl.create(AddInvoiceForm);
     addForm.present();
   }
-  deleteInvoice (invoice) {
-    let alert = this.alertCtrl.create({
-      title: 'Are you sure?',
-      subTitle: 'Are you sure you want to remove this invoice?',
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => {
-            alert.dismiss()
-          }
-        },
-        {
-          text: 'Confirm',
-          handler: data => {
-            this.invoices.remove(invoice.$key)
-          }
-        }
-      ]
-    })
-    alert.present();
-  }
   editInvoice (invoice) {
     let addForm = this.modalCtrl.create(AddInvoiceForm, {invoice: invoice});
     addForm.present();

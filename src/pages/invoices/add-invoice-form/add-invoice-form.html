@@ -43,13 +43,13 @@
       </ion-item>
     </ion-list>
     <div padding>
-      <button ion-button large block outline type="submit">Submit</button>
+      <button ion-button large block outline type="submit">Save</button>
     </div>
   </form>
-  <ion-fab bottom center>
-    <button ion-fab mini (click)="showHelp()"><ion-icon name="help-circle"></ion-icon></button>
-  </ion-fab>
-  <div class="help-message" (click)="showHelp()">
-    I need help!
+  <div *ngIf="editInvoice" padding>
+    <button ion-button large block outline color="danger" (click)="deleteInvoice()">Delete</button>
   </div>
+  <ion-fab top right edge>
+    <button ion-fab (click)="showHelp()"><ion-icon name="help-circle"></ion-icon></button>
+  </ion-fab>
 </ion-content>
