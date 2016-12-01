@@ -313,19 +313,16 @@ export class StatsPage {
 
     let buildSteps = function(restrictionStepLevels, done) {
       let steps = []
+      let monthStartEnd = this.restrictions.getMonthStartEnd(filter)
       restrictionStepLevels.forEach((level) => {
         steps.push([])
-        readingData.forEach((item) => {
-          steps[steps.length - 1].push({
-            x: item.x,
-            y: level
-          })
+        steps[steps.length - 1].push({
+          x: monthStartEnd.start,
+          y: level
         })
-        invoiceData.forEach((item) => {
-          steps[steps.length - 1].push({
-            x: item.x,
-            y: level
-          })
+        steps[steps.length - 1].push({
+          x: monthStartEnd.end,
+          y: level
         })
       })
       done(null, steps)
